@@ -23,9 +23,9 @@ public class EmployeeRegister
         return await _storage.AddEmployeeAsync(employee);
     }
 
-    public async Task<bool> RemoveAsync(Employee employee)
+    public async Task<bool> RemoveAsync(string id)
     {
-        return await _storage.RemoveEmployeeAsync(employee.ID);
+        return await _storage.RemoveEmployeeAsync(id);
     }
 
     public async Task<Dictionary<string, Employee>> FetchEmployeesAsync()
