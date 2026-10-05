@@ -13,14 +13,15 @@ public class EmployeeRegister
         _storage = storage;
     }
 
-    public async Task<bool> UpdateAsync(Employee employee)
+    public async Task<bool> UpdateAsync(string id, string name)
     {
-        return await _storage.UpdateEmployeeAsync(employee);
+        return await _storage.UpdateEmployeeAsync(id, name);
     }
 
-    public async Task<bool> AddAsync(Employee employee)
+    public async Task<bool> AddAsync(string name, int salary)
     {
-        return await _storage.AddEmployeeAsync(employee);
+        if (salary < 0) return false;
+        return await _storage.AddEmployeeAsync(new Employee(name, salary));
     }
 
     public async Task<bool> RemoveAsync(string id)
@@ -28,9 +29,10 @@ public class EmployeeRegister
         return await _storage.RemoveEmployeeAsync(id);
     }
 
-    public async Task<Dictionary<string, Employee>> FetchEmployeesAsync()
+    public async Task<Employee[]> FetchEmployeesAsync()
     {
-        return await _storage.FetchEmployeesAsync();
+        Dictionary<string, Employee> map = await _storage.FetchEmployeesAsync();
+        return [.. map.Values];
     }
 
 }

@@ -18,10 +18,20 @@ public class EmployeeStorage : IStorage
         return new EmployeeStorage(new Dictionary<String, Employee>());
     }
 
-    public async Task<bool> UpdateEmployeeAsync(Employee employee)
+    public async Task<bool> UpdateEmployeeAsync(string id, string name)
     {
-        if (_map.ContainsKey(employee.ID)) return false;
-        _map[employee.ID] = employee;
+        if (!_map.ContainsKey(id)) return false;
+
+        Employee employee = _map[id];
+        employee.Name = name;
+        return true;
+    }
+    public async Task<bool> UpdateEmployeeAsync(string id, int salary)
+    {
+        if (!_map.ContainsKey(id)) return false;
+
+        Employee employee = _map[id];
+        employee.Salary = salary;
         return true;
     }
 
