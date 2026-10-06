@@ -32,7 +32,7 @@ public class EmployeeRegister
     public async Task<Employee[]> FetchEmployeesAsync()
     {
         Dictionary<string, Employee> map = await _storage.FetchEmployeesAsync();
-        return [.. map.Values];
+        return map.Values.ToArray(); // Return a copy of the array,
     }
 
 }
