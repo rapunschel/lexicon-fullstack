@@ -35,8 +35,7 @@ public class ConsoleApp(EmployeeRegister register)
                     await RemoveCmdAsync();
                     break;
                 case Command.Update:
-                    System.Console.WriteLine("Not implemented yet. Enter anything to continue");
-
+                    System.Console.WriteLine("Not implemented yet. Press any key to continue...");
                     break;
                 case Command.Show:
                     PrintTable(await _register.FetchEmployeesAsync());
@@ -45,7 +44,7 @@ public class ConsoleApp(EmployeeRegister register)
                     return;
 
             }
-            System.Console.Write("...");
+            System.Console.Write("Press any key to continue...");
             Console.ReadKey();
             System.Console.WriteLine();
 
