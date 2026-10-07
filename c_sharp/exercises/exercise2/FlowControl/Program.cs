@@ -82,7 +82,12 @@ void RepeatUserInput()
 
     for (int i = 0; i < 10; i++)
     {
-        Console.Write(input);
+        if (i == 9)
+        {
+            Console.Write($"{i + 1}. {input}");
+            continue;
+        }
+        Console.Write($"{i + 1}. {input}, ");
     }
 }
 
