@@ -34,12 +34,18 @@ void Run()
                     break;
                 case 2:
                     PrintGroupPrice(GetGroupPrices(ReadPositiveInt("How many people are in your group?")));
+                    WaitForUserKeyPress();
+
                     break;
                 case 3:
                     RepeatUserInput();
+                    WaitForUserKeyPress();
+
                     break;
                 case 4:
                     PrintThirdWordInSentence();
+                    WaitForUserKeyPress();
+
                     break;
                 default:
                     System.Console.WriteLine(invalidCmdMessage);
@@ -121,7 +127,7 @@ int ReadPositiveInt(string query, string errorMessage = "Not a valid number.")
 
 void WaitForUserKeyPress()
 {
-    System.Console.WriteLine("Press any key to continue...");
+    System.Console.WriteLine("\nPress any key to continue...");
     Console.ReadKey();
     System.Console.WriteLine();
 }
@@ -132,8 +138,8 @@ int GetPrice(int age)
     int youthPrice = 80;
     int seniorPrice = 90;
     int standardPrice = 120;
-
-    if (age < 20) return youthPrice;
+    if (age < 5 || age > 100) return 0;
+    else if (age < 20) return youthPrice;
     else if (age > 64) return seniorPrice;
     else return standardPrice;
 }
