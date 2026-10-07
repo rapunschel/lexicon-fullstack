@@ -7,25 +7,19 @@ string menuCmdsMessage = "\n0: To exit program.\n" +
                          "3: Repeat input 10 times.\n" +
                          "4: \n";
 
-string promptAgeMessage = "Enter an age: ";
+string promptAgeMessage = "\nEnter an age: ";
 
 int youthPrice = 80;
 int seniorPrice = 90;
 int standardPrice = 120;
 
-string invalidCmdMessage = "\nInvalid command\n";
-string invalidNumberMessage = "Not a number.\n";
-string nonPositiveAgeMessage = "Please enter a positive age\n";
-
-string youthPriceMessage = $"Youth price: {youthPrice}.";
-string seniorPriceMessage = $"Senior price: {seniorPrice}.";
-string standardPriceMessage = $"Standard price: {standardPrice}";
-
-bool isRunning = true;
-
+string invalidCmdMessage = "Invalid command";
+string invalidNumberMessage = "Not a number.";
+string nonPositiveAgeMessage = "\nPlease enter a positive age\n";
 
 
 System.Console.WriteLine(headMenuMessage);
+bool isRunning = true;
 while (isRunning)
 {
 
@@ -38,7 +32,8 @@ while (isRunning)
                 isRunning = false;
                 break;
             case 1:
-                PrintAgePrice();
+                int price = GetAgeAndPrice(out int age);
+                PrintAgePrice(age: age, price: price);
                 WaitForUserKeyPress();
                 break;
             case 2:
@@ -64,23 +59,32 @@ void WaitForUserKeyPress()
     System.Console.WriteLine();
 
 }
-void PrintAgePrice()
+
+int GetAgeAndPrice(out int age)
 {
     while (true)
     {
         System.Console.WriteLine(promptAgeMessage);
-        if (int.TryParse(Console.ReadLine(), out int age))
+        if (int.TryParse(Console.ReadLine(), out age))
         {
             if (age < 0)
             {
                 System.Console.WriteLine(nonPositiveAgeMessage);
                 continue;
             }
-            if (age < 20) System.Console.WriteLine(youthPriceMessage);
-            else if (age > 64) System.Console.WriteLine(seniorPriceMessage);
-            else System.Console.WriteLine(standardPriceMessage);
-            return;
+            if (age < 20) return youthPrice;
+            else if (age > 64) return seniorPrice;
+            else return standardPrice;
+
+
         }
         else System.Console.WriteLine(invalidNumberMessage);
     }
+}
+
+void PrintAgePrice(int age, int price)
+{
+    if (age < 20) System.Console.WriteLine($"Youth price: {youthPrice}.");
+    else if (age > 64) System.Console.WriteLine($"Senior price: {seniorPrice}.");
+    else System.Console.WriteLine($"Standard price: {standardPrice}");
 }
