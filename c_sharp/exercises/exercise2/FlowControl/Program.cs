@@ -13,7 +13,7 @@ void Run()
                              "1: To see prices for youth or senior.\n" +
                              "2: Get total price for your group.\n" +
                              "3: Repeat input 10 times.\n" +
-                             "4: \n";
+                             "4: Print third word of a sentence.\n";
     const string invalidCmdMessage = "Invalid command";
     System.Console.WriteLine(headMenuMessage);
     bool isRunning = true;
