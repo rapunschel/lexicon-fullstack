@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Linq;
+using System.Security.Cryptography;
 
 
 const string headMenuMessage = "Welcome to the Cinema menu";
 const string menuCmdsMessage = "\n0: To exit program.\n" +
                          "1: To see prices for youth or senior.\n" +
+                         "2: Get total price for your group.\n" +
                          "3: Repeat input 10 times.\n" +
                          "4: \n";
 const string invalidCmdMessage = "Invalid command";
@@ -24,11 +27,11 @@ while (isRunning)
                 isRunning = false;
                 break;
             case 1:
-                int price = GetAgeAndPrice(out int age);
-                PrintAgePrice(age: age, price: price);
+                PrintCategoryPrice();
                 WaitForUserKeyPress();
                 break;
             case 2:
+                PrintGroupPrice(GetGroupPrices(ReadPositiveInt("How many people are in your group?")));
                 break;
             case 3:
                 break;
@@ -43,18 +46,34 @@ while (isRunning)
     else System.Console.WriteLine(invalidCmdMessage);
 }
 
-
-int[] GetGroupPrices()
+void PrintCategoryPrice()
 {
-    int[] result = new int[ReadPositiveInt("How many people are in your group?")];
+    int age = ReadPositiveInt(query: "\nEnter an age: ",
+                          errorMessage: "\nPlease enter a positive age");
+    System.Console.WriteLine($"{GetPriceCategory(age)} price: {GetPrice(age)}.");
+}
 
+void PrintGroupPrice(int[] prices)
+{
+    System.Console.WriteLine($"Number of people: {prices.Length}");
+    System.Console.WriteLine($"Total price: {prices.Sum()}");
+}
+
+int[] GetGroupPrices(int groupSize)
+{
+    int[] result = new int[groupSize];
+
+    for (int i = 0; i < result.Length; i++)
+    {
+        int age = ReadPositiveInt(query: "\nEnter an age: ", errorMessage: "\nPlease enter a positive age");
+        result[i] = GetPrice(age);
+    }
 
     return result;
 }
 
 int ReadPositiveInt(string query, string errorMessage = "Not a valid number.")
 {
-
     while (true)
     {
         System.Console.WriteLine(query);
@@ -71,26 +90,23 @@ void WaitForUserKeyPress()
     System.Console.WriteLine("Press any key to continue...");
     Console.ReadKey();
     System.Console.WriteLine();
-
 }
 
-int GetAgeAndPrice(out int age)
+
+int GetPrice(int age)
 {
-    const string nonPositiveAgeMessage = "\nPlease enter a positive age";
-    const string promptAgeMessage = "\nEnter an age: ";
     int youthPrice = 80;
     int seniorPrice = 90;
     int standardPrice = 120;
-    age = ReadPositiveInt(query: promptAgeMessage, errorMessage: nonPositiveAgeMessage);
 
     if (age < 20) return youthPrice;
     else if (age > 64) return seniorPrice;
     else return standardPrice;
 }
 
-void PrintAgePrice(int age, int price)
+string GetPriceCategory(int age)
 {
-    if (age < 20) System.Console.WriteLine($"Youth price: {price}.");
-    else if (age > 64) System.Console.WriteLine($"Senior price: {price}.");
-    else System.Console.WriteLine($"Standard price: {price}");
+    if (age < 20) return $"Youth";
+    else if (age > 64) return $"Senior";
+    else return $"Standard";
 }
