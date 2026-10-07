@@ -34,6 +34,7 @@ while (isRunning)
                 PrintGroupPrice(GetGroupPrices(ReadPositiveInt("How many people are in your group?")));
                 break;
             case 3:
+                RepeatUserInput();
                 break;
             case 4:
                 break;
@@ -44,6 +45,17 @@ while (isRunning)
 
     }
     else System.Console.WriteLine(invalidCmdMessage);
+}
+
+void RepeatUserInput()
+{
+    System.Console.WriteLine("What do you want to repeat 10 times?");
+    string input = Console.ReadLine();
+
+    for (int i = 0; i < 10; i++)
+    {
+        Console.Write(input);
+    }
 }
 
 void PrintCategoryPrice()
