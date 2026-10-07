@@ -14,7 +14,6 @@ public class EmployeeStorage : IStorage
 
     public async static Task<EmployeeStorage> InitStorage()
     {
-        // Here we'd fetch from an actual db and then return the storage.
         return new EmployeeStorage(new Dictionary<String, Employee>());
     }
 
