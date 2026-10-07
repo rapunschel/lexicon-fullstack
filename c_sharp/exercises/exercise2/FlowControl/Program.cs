@@ -1,50 +1,72 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 
-const string headMenuMessage = "Welcome to the Cinema menu";
-const string menuCmdsMessage = "\n0: To exit program.\n" +
-                         "1: To see prices for youth or senior.\n" +
-                         "2: Get total price for your group.\n" +
-                         "3: Repeat input 10 times.\n" +
-                         "4: \n";
-const string invalidCmdMessage = "Invalid command";
+Run();
 
 
-
-System.Console.WriteLine(headMenuMessage);
-bool isRunning = true;
-while (isRunning)
+void Run()
 {
-
-    System.Console.WriteLine(menuCmdsMessage);
-    if (int.TryParse(Console.ReadLine(), out int command))
+    const string headMenuMessage = "Welcome to the Cinema menu";
+    const string menuCmdsMessage = "\n0: To exit program.\n" +
+                             "1: To see prices for youth or senior.\n" +
+                             "2: Get total price for your group.\n" +
+                             "3: Repeat input 10 times.\n" +
+                             "4: \n";
+    const string invalidCmdMessage = "Invalid command";
+    System.Console.WriteLine(headMenuMessage);
+    bool isRunning = true;
+    while (isRunning)
     {
-        switch (command)
-        {
-            case 0:
-                isRunning = false;
-                break;
-            case 1:
-                PrintCategoryPrice();
-                WaitForUserKeyPress();
-                break;
-            case 2:
-                PrintGroupPrice(GetGroupPrices(ReadPositiveInt("How many people are in your group?")));
-                break;
-            case 3:
-                RepeatUserInput();
-                break;
-            case 4:
-                break;
-            default:
-                System.Console.WriteLine(invalidCmdMessage);
-                break;
-        }
 
+        System.Console.WriteLine(menuCmdsMessage);
+        if (int.TryParse(Console.ReadLine(), out int command))
+        {
+            switch (command)
+            {
+                case 0:
+                    isRunning = false;
+                    break;
+                case 1:
+                    PrintCategoryPrice();
+                    WaitForUserKeyPress();
+                    break;
+                case 2:
+                    PrintGroupPrice(GetGroupPrices(ReadPositiveInt("How many people are in your group?")));
+                    break;
+                case 3:
+                    RepeatUserInput();
+                    break;
+                case 4:
+                    PrintThirdWordInSentence();
+                    break;
+                default:
+                    System.Console.WriteLine(invalidCmdMessage);
+                    break;
+            }
+
+        }
+        else System.Console.WriteLine(invalidCmdMessage);
     }
-    else System.Console.WriteLine(invalidCmdMessage);
+}
+
+
+void PrintThirdWordInSentence()
+{
+    string input;
+    string[] subs;
+    while (true)
+    {
+        System.Console.WriteLine("Enter a sentence with at least 3 words");
+        input = Console.ReadLine();
+        input = Regex.Replace(input.Trim(), @"\s+", " ");
+        subs = input.Split(' ');
+        if (subs.Length >= 3) break;
+        System.Console.WriteLine("\nDoesnt contain 3 words");
+    }
+
+    System.Console.WriteLine($"\nThird word is: {subs[2]}");
 }
 
 void RepeatUserInput()
