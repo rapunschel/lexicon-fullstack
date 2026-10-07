@@ -9,9 +9,6 @@ string menuCmdsMessage = "\n0: To exit program.\n" +
 
 string promptAgeMessage = "\nEnter an age: ";
 
-int youthPrice = 80;
-int seniorPrice = 90;
-int standardPrice = 120;
 
 string invalidCmdMessage = "Invalid command";
 string invalidNumberMessage = "Not a number.";
@@ -62,6 +59,10 @@ void WaitForUserKeyPress()
 
 int GetAgeAndPrice(out int age)
 {
+    int youthPrice = 80;
+    int seniorPrice = 90;
+    int standardPrice = 120;
+
     while (true)
     {
         System.Console.WriteLine(promptAgeMessage);
@@ -84,7 +85,7 @@ int GetAgeAndPrice(out int age)
 
 void PrintAgePrice(int age, int price)
 {
-    if (age < 20) System.Console.WriteLine($"Youth price: {youthPrice}.");
-    else if (age > 64) System.Console.WriteLine($"Senior price: {seniorPrice}.");
-    else System.Console.WriteLine($"Standard price: {standardPrice}");
+    if (age < 20) System.Console.WriteLine($"Youth price: {price}.");
+    else if (age > 64) System.Console.WriteLine($"Senior price: {price}.");
+    else System.Console.WriteLine($"Standard price: {price}");
 }
