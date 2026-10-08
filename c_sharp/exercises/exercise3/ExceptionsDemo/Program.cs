@@ -19,11 +19,11 @@ namespace ExceptionsDemo
 
                     Console.WriteLine($"\nResultat: {result}");
                 }
-                // catch (FileNotFoundException ex)
-                // {
-                //     // Specifikt fel om filen inte finns
-                //     Console.WriteLine($"Filen hittades inte: {ex.Message}");
-                // }
+                catch (FileNotFoundException ex)
+                {
+                    // Specifikt fel om filen inte finns
+                    Console.WriteLine($"Filen hittades inte: {ex.Message}");
+                }
                 catch (FormatException ex)
                 {
                     // Specifikt fel om texten inte kan tolkas som tal
@@ -74,11 +74,7 @@ namespace ExceptionsDemo
                     if (double.IsInfinity(result)) throw new DivideByZeroException();
                     return result;
                 }
-                catch (DivideByZeroException ex)
-                {
-                    System.Console.WriteLine("test");
-                    throw;
-                }
+
                 catch (FormatException ex)
                 {
                     // Vi kan logga eller omformulera felet
@@ -90,10 +86,9 @@ namespace ExceptionsDemo
                 }
                 catch (Exception ex)
                 {
-                    // System.Console.WriteLine($"Det gick inte att processa filen: {ex.Message}");
+                    System.Console.WriteLine($"Det gick inte att processa filen: {ex.Message}");
                     throw;
-
-                    // Om vi vill ge en mer meningsfull feltyp till anroparen
+                    // // Om vi vill ge en mer meningsfull feltyp till anroparen
                     // throw new InvalidOperationException(
                     // "Det gick inte att processa filen.",
                     // ex); // InnerException = ursprunglig fel
