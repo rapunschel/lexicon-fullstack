@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.ComponentModel.Design;
+using System.Text;
 
 namespace LINQSamples
 {
@@ -11,9 +12,10 @@ namespace LINQSamples
     public List<Product> GetAllQuery()
     {
       List<Product> products = GetProducts();
-      List<Product> list = new();
+      List<Product> list;
 
       // Write Query Syntax Here
+      list = (from product in products select product).ToList();
 
 
       return list;
@@ -30,7 +32,8 @@ namespace LINQSamples
       List<Product> list = new();
 
       // Write Method Syntax Here
-      
+      list = products.Select(prod => prod).ToList();
+
 
       return list;
     }
@@ -44,9 +47,9 @@ namespace LINQSamples
     {
       List<Product> products = GetProducts();
       List<string> list = new();
-      
+
       // Write Query Syntax Here
-      
+      list.AddRange(from prod in products select prod.Name);
 
       return list;
     }
@@ -60,9 +63,10 @@ namespace LINQSamples
     {
       List<Product> products = GetProducts();
       List<string> list = new();
-     
+
       // Write Method Syntax Here
-      
+      list.AddRange(products.Select(prod => prod.Name));
+
 
       return list;
     }
@@ -77,8 +81,13 @@ namespace LINQSamples
       List<Product> products = GetProducts();
       List<Product> list = new();
 
-      // Write Query Syntax Here
-      
+      // Write Query Syntax Here3
+      list = [.. from prod in products
+              select new Product
+              {
+                ProductID = prod.ProductID,
+              }];
+
 
       return list;
     }
@@ -93,8 +102,9 @@ namespace LINQSamples
       List<Product> products = GetProducts();
       List<Product> list = new();
 
+      list.AddRange(products.Select(prod => new Product { ProductID = prod.ProductID }));
       // Write Method Syntax Here
-      
+
 
       return list;
     }
@@ -110,15 +120,22 @@ namespace LINQSamples
       StringBuilder sb = new(2048);
 
       // Write Query Syntax Here
-      
+      var list = (from prod in products
+                  select new
+                  {
+                    Identifier = prod.ProductID,
+                    ProductName = prod.Name,
+                    ProductSize = prod.Size,
+                  }).ToList();
+
 
       // Loop through anonymous class
-      //foreach (var prod in list)
-      //{
-      //  sb.AppendLine($"Product ID: {prod.Identifier}");
-      //  sb.AppendLine($"   Product Name: {prod.ProductName}");
-      //  sb.AppendLine($"   Product Size: {prod.ProductSize}");
-      //}
+      foreach (var prod in list)
+      {
+        sb.AppendLine($"Product ID: {prod.Identifier}");
+        sb.AppendLine($"   Product Name: {prod.ProductName}");
+        sb.AppendLine($"   Product Size: {prod.ProductSize}");
+      }
 
       return sb.ToString();
     }
@@ -134,15 +151,20 @@ namespace LINQSamples
       StringBuilder sb = new(2048);
 
       // Write Method Syntax Here
-     
-
+      var list = products.Select(prod =>
+                  new
+                  {
+                    Identifier = prod.ProductID,
+                    ProductName = prod.Name,
+                    ProductSize = prod.Size,
+                  }).ToList();
       // Loop through anonymous class
-      //foreach (var prod in list)
-      //{
-      //  sb.AppendLine($"Product ID: {prod.Identifier}");
-      //  sb.AppendLine($"   Product Name: {prod.ProductName}");
-      //  sb.AppendLine($"   Product Size: {prod.ProductSize}");
-      //}
+      foreach (var prod in list)
+      {
+        sb.AppendLine($"Product ID: {prod.Identifier}");
+        sb.AppendLine($"   Product Name: {prod.ProductName}");
+        sb.AppendLine($"   Product Size: {prod.ProductSize}");
+      }
 
       return sb.ToString();
     }
