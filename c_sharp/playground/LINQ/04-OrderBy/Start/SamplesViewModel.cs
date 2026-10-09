@@ -1,4 +1,6 @@
-﻿namespace LINQSamples
+﻿using System.ComponentModel.Design;
+
+namespace LINQSamples
 {
   public class SamplesViewModel : ViewModelBase
   {
@@ -11,8 +13,10 @@
       List<Product> products = GetProducts();
       List<Product> list = new();
 
-      // Write Query Syntax Here
-      
+      // Write Query Syntax Here  
+      list = [.. from prod in products
+       orderby prod.Name select prod];
+
 
       return list;
     }
@@ -28,7 +32,8 @@
       List<Product> list = new();
 
       // Write Method Syntax Here
-     
+      list = products.OrderBy(prod => prod.Name).ToList();
+
 
       return list;
     }
@@ -44,7 +49,7 @@
       List<Product> list = new();
 
       // Write Query Syntax Here
-    
+
 
       return list;
     }
@@ -60,7 +65,7 @@
       List<Product> list = new();
 
       // Write Method Syntax Here
-      
+
 
       return list;
     }
@@ -76,7 +81,7 @@
       List<Product> list = new();
 
       // Write Query Syntax Here
-     
+
 
       return list;
     }
@@ -92,7 +97,7 @@
       List<Product> list = new();
 
       // Write Method Syntax Here
-     
+
 
       return list;
     }
@@ -108,7 +113,7 @@
       List<Product> list = new();
 
       // Write Method Syntax Here
-      
+
 
       return list;
     }
