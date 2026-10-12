@@ -49,7 +49,8 @@ namespace LINQSamples
       List<Product> list = new();
 
       // Write Query Syntax Here
-
+      list = [.. from prod in products orderby prod.Name descending
+             select prod];
 
       return list;
     }
@@ -65,6 +66,8 @@ namespace LINQSamples
       List<Product> list = new();
 
       // Write Method Syntax Here
+      list = products.OrderByDescending(prod => prod.Name).ToList();
+
 
 
       return list;
@@ -81,7 +84,9 @@ namespace LINQSamples
       List<Product> list = new();
 
       // Write Query Syntax Here
-
+      list = [.. from prod in products
+        orderby prod.Color descending, prod.Name
+        select prod];
 
       return list;
     }
@@ -97,6 +102,7 @@ namespace LINQSamples
       List<Product> list = new();
 
       // Write Method Syntax Here
+      list = products.OrderByDescending(prod => prod.Color).ThenBy(prod => prod.Name).ToList();
 
 
       return list;
@@ -113,6 +119,9 @@ namespace LINQSamples
       List<Product> list = new();
 
       // Write Method Syntax Here
+      list = products.OrderByDescending(prod => prod.Color)
+                      .ThenByDescending(prod => prod.Name).ToList();
+
 
 
       return list;
