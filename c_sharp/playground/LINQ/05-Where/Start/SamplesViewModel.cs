@@ -12,6 +12,9 @@
       List<Product> list = new();
 
       // Write Query Syntax Here
+      list = [.. from prod in products
+              where prod.Name.StartsWith("S")
+              select prod];
 
 
       return list;
@@ -28,6 +31,7 @@
       List<Product> list = new();
 
       // Write Method Syntax Here
+      list = products.Where(prod => prod.Name.StartsWith("S")).ToList();
 
 
       return list;
@@ -44,6 +48,9 @@
       List<Product> list = new();
 
       // Write Query Syntax Here
+      list = [.. from prod in products
+            where prod.Name.StartsWith("S") && prod.StandardCost > 0
+            select prod];
 
 
       return list;
@@ -60,7 +67,7 @@
       List<Product> list = new();
 
       // Write Method Syntax Here
-
+      list = products.Where(prod => prod.Name.StartsWith("S") && prod.StandardCost > 0).ToList();
 
       return list;
     }
@@ -76,7 +83,8 @@
       List<Product> list = new();
 
       // Write Query Syntax Here
-
+      list = (from prod in products
+              select prod).ByColor("Red").ToList();
       return list;
     }
     #endregion
@@ -91,6 +99,7 @@
       List<Product> list = new();
 
       // Write Method Syntax Here
+      list = products.ByColor("Red").ToList();
 
 
       return list;

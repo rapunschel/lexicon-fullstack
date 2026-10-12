@@ -4,7 +4,8 @@
 SamplesViewModel vm = new();
 
 // Call Sample Method
-var result = vm.WhereQuery();
+var result = vm.WhereTwoFieldsMethod();
 
 // Display Results
 vm.Display(result);
+
