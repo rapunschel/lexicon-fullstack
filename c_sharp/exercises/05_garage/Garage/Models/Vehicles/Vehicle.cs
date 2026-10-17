@@ -1,18 +1,26 @@
 using System;
+using System.Collections.Generic;
 namespace Garage.Models.Vehicles;
 
 public abstract class Vehicle
 {
-    string RegNumber
+    private static HashSet<string> set = new HashSet<string>();
+
+    public string RegNumber
     {
         get;
-        set
+        private set
         {
+            value = value.ToUpper();
+            if (set.Contains(value)) throw new ArgumentException("Reg number is not unique");
+
             field = string.IsNullOrEmpty(value) ? throw new ArgumentException("Registration number cant be empty")
                 : value;
+
+            set.Add(value);
         }
     }
-    string Color
+    public string Color
     {
         get;
         set
@@ -21,7 +29,7 @@ public abstract class Vehicle
                 : value;
         }
     }
-    string Brand
+    public string Brand
     {
         get;
         set
@@ -31,7 +39,7 @@ public abstract class Vehicle
         }
     }
 
-    int WheelCount
+    public int WheelCount
     {
         get;
         set
@@ -43,10 +51,10 @@ public abstract class Vehicle
 
     public Vehicle(string brand, string regNumber, string color, int wheelCount)
     {
-        RegNumber = regNumber;
         Color = color;
         WheelCount = wheelCount;
         Brand = brand;
+        RegNumber = regNumber;
     }
 
     public override string ToString()
