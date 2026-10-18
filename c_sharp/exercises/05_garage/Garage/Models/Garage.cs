@@ -24,7 +24,7 @@ public class Garage<T> where T : Vehicle
 
     public IEnumerable<T> Search(Func<T, bool> matches)
     {
-        return _storage.OfType<T>().Where(matches); // TODO return copy of storage and copies of each object
+        return [.. _storage.OfType<T>().Where(matches).Select(item => (T)item.ShallowCopy())];
     }
 
     public bool Add(T item)
@@ -33,6 +33,9 @@ public class Garage<T> where T : Vehicle
 
         for (int i = 0; i < _storage.Length; i++)
         {
+            // Ensure no clones can be added
+            if (_storage[i].RegNumber == item.RegNumber) throw new ArgumentException("Vehicle already exists in the garage.");
+
             if (EqualityComparer<T>.Default.Equals(_storage[i], item))
             {
                 return false;
