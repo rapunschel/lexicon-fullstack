@@ -31,22 +31,17 @@ public class Garage<T> where T : Vehicle
     {
         if (_pointer >= _storage.Length) return false;
 
+        // Ensure no clones can be added
         for (int i = 0; i < _storage.Length; i++)
         {
-            // Ensure no clones can be added
-            if (_storage[i].RegNumber == item.RegNumber) throw new ArgumentException("Vehicle already exists in the garage.");
-
-            if (EqualityComparer<T>.Default.Equals(_storage[i], item))
-            {
-                return false;
-            }
-
+            if (_storage[i] == null) continue;
+            if (string.Equals(_storage[i].RegNumber, item.RegNumber, StringComparison.OrdinalIgnoreCase)) return false;
         }
         _storage[_pointer++] = item;
         return true;
     }
 
-    public bool Remove(T item)
+    public bool Remove(string regNumber)
     {
         bool result = false;
         for (int i = 0; i < _storage.Length; i++)
@@ -62,7 +57,7 @@ public class Garage<T> where T : Vehicle
                     _storage[i] = default;
                 }
             }
-            else if (EqualityComparer<T>.Default.Equals(_storage[i], item))
+            else if (string.Equals(_storage[i].RegNumber, regNumber, StringComparison.OrdinalIgnoreCase))
             {
                 result = true;
                 _pointer--;
