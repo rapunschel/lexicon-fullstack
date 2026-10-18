@@ -14,8 +14,9 @@ public class Car : Vehicle
         }
     }
 
-    public Car(string brand, string regNumber, string color, int wheelCount) : base(brand, regNumber, color, wheelCount)
+    public Car(string brand, string regNumber, string color, int wheelCount, int engineCount) : base(brand, regNumber, color, wheelCount)
     {
+        EngineCount = engineCount;
     }
 
 
