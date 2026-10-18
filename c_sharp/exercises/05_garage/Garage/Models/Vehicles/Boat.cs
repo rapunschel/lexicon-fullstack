@@ -19,4 +19,7 @@ public class Boat : Vehicle
     {
         return $"Boat: {base.ToString()} | Fuel: {Fuel}";
     }
+
+    public override Boat ShallowCopy() => (Boat)MemberwiseClone();
+
 }

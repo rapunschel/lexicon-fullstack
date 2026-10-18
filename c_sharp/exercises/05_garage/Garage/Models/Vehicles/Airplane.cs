@@ -26,4 +26,7 @@ public class Airplane : Vehicle
     {
         return $"Airplane: {base.ToString()} | Speed: {Speed}";
     }
+
+    public override Airplane ShallowCopy() => (Airplane)MemberwiseClone();
+
 }

@@ -23,4 +23,6 @@ public class Car : Vehicle
     {
         return $"Car: {base.ToString()} | EngineCount: {EngineCount}";
     }
+    public override Car ShallowCopy() => (Car)MemberwiseClone();
+
 }

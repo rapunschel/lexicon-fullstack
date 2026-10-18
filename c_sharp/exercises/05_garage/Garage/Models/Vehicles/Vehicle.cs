@@ -6,6 +6,7 @@ public abstract class Vehicle
 {
     private static HashSet<string> set = new HashSet<string>();
 
+
     public string RegNumber
     {
         get;
@@ -61,4 +62,6 @@ public abstract class Vehicle
     {
         return $"Brand: {Brand} | Reg number: {RegNumber} | Color: {Color} | Wheels: {WheelCount}";
     }
+
+    public abstract Vehicle ShallowCopy();
 }

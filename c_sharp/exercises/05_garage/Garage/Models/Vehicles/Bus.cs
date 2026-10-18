@@ -26,4 +26,6 @@ public class Bus : Vehicle
     {
         return $"Bus: {base.ToString()} | Length: {Length}";
     }
+
+    public override Bus ShallowCopy() => (Bus)MemberwiseClone();
 }

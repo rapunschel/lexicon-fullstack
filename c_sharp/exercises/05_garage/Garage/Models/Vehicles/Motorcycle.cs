@@ -26,4 +26,7 @@ public class Motorcycle : Vehicle
     {
         return $"Motorcycle: {base.ToString()} | seats: {Seats}";
     }
+
+    public override Motorcycle ShallowCopy() => (Motorcycle)MemberwiseClone();
+
 }
