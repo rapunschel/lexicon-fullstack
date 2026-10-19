@@ -2,12 +2,21 @@ using System;
 using System.IO.Pipelines;
 using System.Text;
 using Garage.Models;
+using Garage.Models.Vehicles;
 using Garage.ViewModels;
 
 namespace Garage.Views;
 
 public class ConsoleApp
 {
+
+    private record VehicleDetails(
+        string Registration,
+        string Brand,
+        string Color,
+        int WheelCount
+        );
+
 
     private GarageViewModel _gvm = new();
 
@@ -83,28 +92,37 @@ public class ConsoleApp
         }
     }
 
+    private VehicleDetails ReadVehicleDetails()
+    {
+
+        while (true)
+        {
+            string input = ReadString(query: "Enter the format: brand, registration, color, wheel count");
+            string[] strings = input.Split(',');
+
+            if (int.TryParse(strings[3].Trim(), out int wheelCount))
+            {
+                return new VehicleDetails(Brand: strings[0], Registration: strings[1], Color: strings[2], WheelCount: wheelCount);
+            }
+            else
+            {
+                System.Console.WriteLine("Invalid input. Try again\n");
+            }
+        }
+    }
 
     private void AddVehicle()
     {
         System.Console.WriteLine("Creating vehicle...");
-        while (true)
+        VehicleDetails details = ReadVehicleDetails();
+        bool result = _gvm.AddVehicle(details.Registration, details.Brand, details.Color, details.WheelCount, out string error);
+        if (result)
         {
-            string input = ReadString(query: "Enter the details as following: registration, brand, color, wheel count");
-
-
-            string[] strings = input.Split(',');
-            if (int.TryParse(strings[3].Trim(), out int wheelCount))
-            {
-                if (_gvm.AddVehicle(regNumber: strings[0], color: strings[2], brand: strings[1], wheelCount, out string error))
-                {
-                    System.Console.WriteLine("Vehicle added to garage");
-                    return;
-                }
-                System.Console.WriteLine($"Error: {error}");
-                return;
-            }
-
-            System.Console.WriteLine("Invalid input. Try again\n");
+            System.Console.WriteLine("Vehicle created successfully...");
+        }
+        else
+        {
+            System.Console.WriteLine($"Error: {error}");
         }
     }
 
