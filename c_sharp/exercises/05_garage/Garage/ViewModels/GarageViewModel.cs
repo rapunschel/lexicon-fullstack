@@ -32,12 +32,6 @@ public class GarageViewModel
         Vehicle vehicle;
         try
         {
-            if (collection == null)
-            {
-                error = "Garage doesn't exist.";
-                return false;
-            }
-
             switch (type)
             {
                 case VehicleType.Car:
@@ -88,6 +82,7 @@ public class GarageViewModel
 
         foreach (Vehicle item in _createdVehicles)
         {
+            if (item == null) continue;
             sb.Append($"{item.ToString()}\n");
         }
         return sb.ToString();
