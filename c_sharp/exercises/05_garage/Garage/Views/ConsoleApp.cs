@@ -137,9 +137,9 @@ public class ConsoleApp
         while (true)
         {
             System.Console.WriteLine(query);
-            string result = Console.ReadLine();
+            string? result = Console.ReadLine();
 
-            if (result == "")
+            if (result == "" || result == null)
             {
                 System.Console.WriteLine(errorMessage);
                 continue;

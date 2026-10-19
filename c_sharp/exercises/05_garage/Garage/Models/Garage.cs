@@ -65,7 +65,7 @@ public class GarageCollection
                 // If last is shifted, set to default
                 if (i == _storage.Length - 1)
                 {
-                    _storage[i] = default;
+                    _storage[i] = default!;
                 }
             }
             else if (string.Equals(_storage[i].RegNumber, regNumber, StringComparison.OrdinalIgnoreCase))

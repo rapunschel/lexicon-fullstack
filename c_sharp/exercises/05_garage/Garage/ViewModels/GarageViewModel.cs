@@ -7,7 +7,7 @@ namespace Garage.ViewModels;
 public class GarageViewModel
 {
 
-    GarageCollection collection;
+    GarageCollection collection = default!;
 
     public bool CreateGarageCollection(int capacity)
     {
@@ -22,7 +22,7 @@ public class GarageViewModel
         }
     }
 
-    public bool AddVehicle(string brand, string regNumber, string color, int wheelCount, out string error)
+    public bool AddVehicle(string brand, string regNumber, string color, int wheelCount, out string? error)
     {
         try
         {
