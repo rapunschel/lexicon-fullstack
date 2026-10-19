@@ -102,7 +102,7 @@ public class ConsoleApp
 
             if (int.TryParse(strings[3].Trim(), out int wheelCount))
             {
-                return new VehicleDetails(Brand: strings[0], Registration: strings[1], Color: strings[2], WheelCount: wheelCount);
+                return new VehicleDetails(Brand: strings[0].Trim(), Registration: strings[1].Trim(), Color: strings[2].Trim(), WheelCount: wheelCount);
             }
             else
             {
