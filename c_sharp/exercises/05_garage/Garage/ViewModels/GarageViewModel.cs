@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using System.Text;
 using Garage.Models;
 using Garage.Models.Records;
@@ -10,14 +9,14 @@ namespace Garage.ViewModels;
 public class GarageViewModel
 {
 
-    private GarageCollection collection = default!;
+    private GarageCollection<Vehicle> collection = default!;
     private Vehicle[] _createdVehicles = new Vehicle[500]; // Too lazy to manually expand will just refactor to list in the future anyway
     private int _pointer = 0;
     public bool CreateGarageCollection(int capacity)
     {
         try
         {
-            collection = new GarageCollection(capacity);
+            collection = new GarageCollection<Vehicle>(capacity);
             return true;
         }
         catch
