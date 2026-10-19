@@ -1,8 +1,4 @@
 using System;
-using System.IO.Pipelines;
-using System.Text;
-using Garage.Models;
-using Garage.Models.Vehicles;
 using Garage.ViewModels;
 
 namespace Garage.Views;
@@ -31,7 +27,6 @@ public class ConsoleApp
                          "5: List all parked vehicles\n";
 
 
-        //GarageCollection collection;
         const string invalidCmdMessage = "Invalid command";
         System.Console.WriteLine(headMenuMessage);
         bool isRunning = true;
@@ -115,7 +110,7 @@ public class ConsoleApp
     {
         System.Console.WriteLine("Creating vehicle...");
         VehicleDetails details = ReadVehicleDetails();
-        bool result = _gvm.AddVehicle(details.Registration, details.Brand, details.Color, details.WheelCount, out string error);
+        bool result = _gvm.AddVehicle(details.Registration, details.Brand, details.Color, details.WheelCount, out string? error);
         if (result)
         {
             System.Console.WriteLine("Vehicle created successfully...");
