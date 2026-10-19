@@ -1,5 +1,6 @@
 using System;
 using Garage.Models;
+using Garage.Models.Records;
 using Garage.Models.Vehicles;
 
 namespace Garage.ViewModels;
@@ -22,8 +23,9 @@ public class GarageViewModel
         }
     }
 
-    public bool AddVehicle(string brand, string regNumber, string color, int wheelCount, out string? error)
+    public bool AddVehicle(VehicleDetails details, VehicleType type, out string? error)
     {
+        error = "";
         try
         {
             if (collection == null)
@@ -31,8 +33,39 @@ public class GarageViewModel
                 error = "Garage doesn't exist.";
                 return false;
             }
-            error = "";
-            collection.Add(new Vehicle(brand: brand, regNumber: regNumber, color: color, wheelCount: wheelCount));
+
+            switch (type)
+            {
+                case VehicleType.Car:
+                    collection.Add(new Car(brand: details.Brand, regNumber: details.Registration,
+                        color: details.Color, wheelCount: details.WheelCount, engineCount: ((CarDetails)details).EngineCount));
+                    break;
+                case VehicleType.Bus:
+                    collection.Add(new Bus(brand: details.Brand, regNumber: details.Registration,
+                        color: details.Color, wheelCount: details.WheelCount, length: ((BusDetails)details).Length));
+
+                    break;
+                case VehicleType.Motorcycle:
+                    collection.Add(new Motorcycle(brand: details.Brand, regNumber: details.Registration,
+                                     color: details.Color, wheelCount: details.WheelCount, ((MotorcycleDetails)details).Seats));
+                    break;
+                case VehicleType.Boat:
+                    details = (BoatDetails)details;
+                    collection.Add(new Boat(brand: details.Brand, regNumber: details.Registration,
+                 color: details.Color, wheelCount: details.WheelCount, ((BoatDetails)details).Fuel));
+
+                    break;
+                case VehicleType.Airplane:
+                    collection.Add(new Airplane(brand: details.Brand, regNumber: details.Registration,
+                 color: details.Color, wheelCount: details.WheelCount, ((AirplaneDetails)details).Speed));
+                    break;
+                default:
+                    collection.Add(new Vehicle(brand: details.Brand, regNumber: details.Registration,
+                        color: details.Color, wheelCount: details.WheelCount));
+                    break;
+
+            }
+
             return true;
         }
         catch (Exception ex)

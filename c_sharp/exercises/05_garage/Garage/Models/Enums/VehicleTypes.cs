@@ -1,4 +1,4 @@
-public enum VehicleTypes
+public enum VehicleType
 {
     Bus,
     Boat,
