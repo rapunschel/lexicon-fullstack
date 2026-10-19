@@ -17,7 +17,8 @@ public class ConsoleApp
         Search = 4,
         RemoveFromGarage = 5,
         ShowParked = 6,
-        ShowNotParked = 7
+        ShowNotParked = 7,
+        InitTestData = 8
     }
     private GarageViewModel _gvm = new();
     public void Run()
@@ -30,7 +31,8 @@ public class ConsoleApp
                          "4: Search vehicle in garage.\n" +
                          "5: Take out vehicle from garage.\n" +
                          "6: List all parked vehicles\n" +
-                         "7: List all unparked vehicles\n";
+                         "7: List all unparked vehicles\n" +
+                         "8: Creates unparked vehicles of various types for testing";
 
 
         const string invalidCmdMessage = "Invalid command";
@@ -76,6 +78,17 @@ public class ConsoleApp
                     case Command.ShowNotParked:
                         System.Console.WriteLine(_gvm.GetNotParkedVehicles());
                         WaitForUserKeyPress();
+                        break;
+                    case Command.InitTestData:
+                        try
+                        {
+                            _gvm.InitTestData();
+                            System.Console.WriteLine("Vehicles created.");
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Console.WriteLine(ex.Message);
+                        }
                         break;
                     default:
                         System.Console.WriteLine(invalidCmdMessage);
