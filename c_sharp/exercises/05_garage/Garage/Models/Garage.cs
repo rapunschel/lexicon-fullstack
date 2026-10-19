@@ -6,28 +6,39 @@ using Garage.Models.Vehicles;
 
 namespace Garage.Models;
 
-public class Garage<T> where T : Vehicle
+public class GarageCollection
 {
-    private T[] _storage;
+    private Vehicle[] _storage;
     private int _pointer = 0;
 
-    public Garage(T[] items)
+    public GarageCollection(Vehicle[] items)
     {
         _storage = [.. items];
     }
 
-    public Garage(int capacity)
+    public GarageCollection(int capacity)
     {
-        _storage = new T[capacity];
+        _storage = new Vehicle[capacity];
     }
 
 
-    public IEnumerable<T> Search(Func<T, bool> matches)
+    public Vehicle[] Search(Func<Vehicle, bool> matches)
     {
-        return [.. _storage.OfType<T>().Where(matches).Select(item => (T)item.ShallowCopy())];
+        Vehicle[] result = new Vehicle[_storage.Length];
+        int count = 0;
+        for (int i = 0; i < _storage.Length; i++)
+        {
+            if (_storage[i] == null) continue;
+            if (matches(_storage[i]))
+            {
+                result[count++] = _storage[i];
+            }
+        }
+        Array.Resize(ref result, count);
+        return result;
     }
 
-    public bool Add(T item)
+    public bool Add(Vehicle item)
     {
         if (_pointer >= _storage.Length) return false;
 
