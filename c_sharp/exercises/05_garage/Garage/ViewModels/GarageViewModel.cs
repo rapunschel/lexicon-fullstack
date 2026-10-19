@@ -9,14 +9,14 @@ namespace Garage.ViewModels;
 public class GarageViewModel
 {
 
-    private GarageCollection<Vehicle> collection = default!;
+    private GarageCollection<Vehicle> _collection = default!;
     private Vehicle[] _createdVehicles = new Vehicle[500]; // Too lazy to manually expand will just refactor to list in the future anyway
     private int _pointer = 0;
     public bool CreateGarageCollection(int capacity)
     {
         try
         {
-            collection = new GarageCollection<Vehicle>(capacity);
+            _collection = new GarageCollection<Vehicle>(capacity);
             return true;
         }
         catch
@@ -24,6 +24,30 @@ public class GarageViewModel
             return false;
         }
     }
+
+    public bool ParkVehicle(string registration)
+    {
+
+        foreach (var item in _createdVehicles)
+        {
+            if (string.Equals(item.RegNumber, registration, StringComparison.OrdinalIgnoreCase))
+            {
+                if (_collection.Add(item))
+                {
+                    return true;
+                }
+                break; // Can only ever be 1 registration in _createdVehicles
+            }
+        }
+
+        return false;
+    }
+
+    public bool RemoveParkedVehicle(string registration)
+    {
+        return _collection.Remove(registration);
+    }
+
 
     public bool CreateVehicle(VehicleDetails details, VehicleType type, out string? error)
     {
@@ -73,9 +97,9 @@ public class GarageViewModel
 
     public string GetParkedCarsInfo()
     {
-        return collection.ToString();
+        return _collection.ToString();
     }
-    public string GetCreatedVehicles()
+    public string GetNotParkedVehicles()
     {
         StringBuilder sb = new();
 

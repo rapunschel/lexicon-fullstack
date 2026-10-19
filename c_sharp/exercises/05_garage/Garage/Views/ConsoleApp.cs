@@ -1,6 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
-using System.Text;
 using Garage.Models.Records;
 using Garage.Models.Vehicles;
 using Garage.ViewModels;
@@ -10,9 +8,18 @@ namespace Garage.Views;
 public class ConsoleApp
 {
 
-
+    private enum Command
+    {
+        Exit = 0,
+        CreateGarage = 1,
+        CreateVehicle = 2,
+        ParkVehicle = 3,
+        Search = 4,
+        RemoveFromGarage = 5,
+        ShowParked = 6,
+        ShowNotParked = 7
+    }
     private GarageViewModel _gvm = new();
-
     public void Run()
     {
         const string headMenuMessage = "Welcome to the Garage";
@@ -23,7 +30,7 @@ public class ConsoleApp
                          "4: Search vehicle in garage.\n" +
                          "5: Take out vehicle from garage.\n" +
                          "6: List all parked vehicles\n" +
-                         "7: List all created vehicles\n";
+                         "7: List all unparked vehicles\n";
 
 
         const string invalidCmdMessage = "Invalid command";
@@ -37,40 +44,38 @@ public class ConsoleApp
 
             if (int.TryParse(Console.ReadLine(), out int command))
             {
-                switch (command)
+                switch ((Command)command)
                 {
-                    case 0:
+                    case Command.Exit:
                         isRunning = false;
                         break;
-                    case 1:
+                    case Command.CreateGarage:
                         CreateGarageCollection();
                         WaitForUserKeyPress();
                         break;
-                    case 2:
+                    case Command.CreateVehicle:
                         CreateVehicleView();
                         WaitForUserKeyPress();
                         break;
-                    case 3:
-                        WaitForUserKeyPress();
-
-                        break;
-                    case 4:
-                        WaitForUserKeyPress();
-
-                        break;
-                    case 5:
+                    case Command.ParkVehicle:
+                        ParkVehicleView();
                         WaitForUserKeyPress();
                         break;
-
-                    case 6:
+                    case Command.RemoveFromGarage:
+                        UnparkVehicleView();
+                        WaitForUserKeyPress();
+                        break;
+                    case Command.Search:
+                        SearchView();
+                        WaitForUserKeyPress();
+                        break;
+                    case Command.ShowParked:
                         ShowParkedVehicles();
                         WaitForUserKeyPress();
-
                         break;
-                    case 7:
-                        System.Console.WriteLine(_gvm.GetCreatedVehicles());
+                    case Command.ShowNotParked:
+                        System.Console.WriteLine(_gvm.GetNotParkedVehicles());
                         WaitForUserKeyPress();
-
                         break;
                     default:
                         System.Console.WriteLine(invalidCmdMessage);
@@ -82,6 +87,29 @@ public class ConsoleApp
         }
     }
 
+    private void SearchView()
+    {
+        System.Console.WriteLine("Not implemented yet...");
+    }
+
+    private void ParkVehicleView()
+    {
+        if (_gvm.ParkVehicle(ReadString(query: "Park vehicle with registration:")))
+        {
+            System.Console.WriteLine("Vehicle was parked.");
+        }
+        else System.Console.WriteLine("Failed to park. Vehicle doesnt exist / vehicle already parked");
+    }
+
+    private void UnparkVehicleView()
+    {
+        if (_gvm.RemoveParkedVehicle(ReadString(query: "Remove vehicle from garage with registration:")))
+        {
+            System.Console.WriteLine("Vehicle was taken out of garage.");
+        }
+        else System.Console.WriteLine("Vehicle not found");
+
+    }
     private void CreateGarageCollection()
     {
         while (true)
