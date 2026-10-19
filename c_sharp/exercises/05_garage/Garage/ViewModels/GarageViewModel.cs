@@ -22,7 +22,7 @@ public class GarageViewModel
         }
     }
 
-    public bool AddVehicle(string regNumber, string color, string brand, int wheelCount, out string error)
+    public bool AddVehicle(string brand, string regNumber, string color, int wheelCount, out string error)
     {
         try
         {
