@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 namespace Garage.Models.Vehicles;
 
-public abstract class Vehicle
+public class Vehicle
 {
     private static HashSet<string> set = new HashSet<string>();
 
@@ -63,5 +63,8 @@ public abstract class Vehicle
         return $"Brand: {Brand} | Reg number: {RegNumber} | Color: {Color} | Wheels: {WheelCount}";
     }
 
-    public abstract Vehicle ShallowCopy();
+    public virtual Vehicle ShallowCopy()
+    {
+        return (Vehicle)MemberwiseClone();
+    }
 }
