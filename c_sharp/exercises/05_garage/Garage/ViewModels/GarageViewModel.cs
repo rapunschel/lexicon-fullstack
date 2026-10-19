@@ -1,4 +1,6 @@
 using System;
+using System.Reflection;
+using System.Text;
 using Garage.Models;
 using Garage.Models.Records;
 using Garage.Models.Vehicles;
@@ -8,8 +10,9 @@ namespace Garage.ViewModels;
 public class GarageViewModel
 {
 
-    GarageCollection collection = default!;
-
+    private GarageCollection collection = default!;
+    private Vehicle[] _createdVehicles = new Vehicle[500]; // Too lazy to manually expand will just refactor to list in the future anyway
+    private int _pointer = 0;
     public bool CreateGarageCollection(int capacity)
     {
         try
@@ -23,9 +26,10 @@ public class GarageViewModel
         }
     }
 
-    public bool AddVehicle(VehicleDetails details, VehicleType type, out string? error)
+    public bool CreateVehicle(VehicleDetails details, VehicleType type, out string? error)
     {
         error = "";
+        Vehicle vehicle;
         try
         {
             if (collection == null)
@@ -37,35 +41,33 @@ public class GarageViewModel
             switch (type)
             {
                 case VehicleType.Car:
-                    collection.Add(new Car(brand: details.Brand, regNumber: details.Registration,
-                        color: details.Color, wheelCount: details.WheelCount, engineCount: ((CarDetails)details).EngineCount));
+                    vehicle = new Car(brand: details.Brand, regNumber: details.Registration,
+                        color: details.Color, wheelCount: details.WheelCount, engineCount: ((CarDetails)details).EngineCount);
                     break;
                 case VehicleType.Bus:
-                    collection.Add(new Bus(brand: details.Brand, regNumber: details.Registration,
-                        color: details.Color, wheelCount: details.WheelCount, length: ((BusDetails)details).Length));
-
+                    vehicle = new Bus(brand: details.Brand, regNumber: details.Registration,
+                        color: details.Color, wheelCount: details.WheelCount, length: ((BusDetails)details).Length);
                     break;
                 case VehicleType.Motorcycle:
-                    collection.Add(new Motorcycle(brand: details.Brand, regNumber: details.Registration,
-                                     color: details.Color, wheelCount: details.WheelCount, ((MotorcycleDetails)details).Seats));
+                    vehicle = new Motorcycle(brand: details.Brand, regNumber: details.Registration,
+                                     color: details.Color, wheelCount: details.WheelCount, ((MotorcycleDetails)details).Seats);
                     break;
                 case VehicleType.Boat:
-                    details = (BoatDetails)details;
-                    collection.Add(new Boat(brand: details.Brand, regNumber: details.Registration,
-                 color: details.Color, wheelCount: details.WheelCount, ((BoatDetails)details).Fuel));
+                    vehicle = new Boat(brand: details.Brand, regNumber: details.Registration,
+                 color: details.Color, wheelCount: details.WheelCount, ((BoatDetails)details).Fuel);
 
                     break;
                 case VehicleType.Airplane:
-                    collection.Add(new Airplane(brand: details.Brand, regNumber: details.Registration,
-                 color: details.Color, wheelCount: details.WheelCount, ((AirplaneDetails)details).Speed));
+                    vehicle = new Airplane(brand: details.Brand, regNumber: details.Registration,
+                 color: details.Color, wheelCount: details.WheelCount, ((AirplaneDetails)details).Speed);
                     break;
                 default:
-                    collection.Add(new Vehicle(brand: details.Brand, regNumber: details.Registration,
-                        color: details.Color, wheelCount: details.WheelCount));
+                    vehicle = new Vehicle(brand: details.Brand, regNumber: details.Registration,
+                        color: details.Color, wheelCount: details.WheelCount);
                     break;
 
             }
-
+            _createdVehicles[_pointer++] = vehicle;
             return true;
         }
         catch (Exception ex)
@@ -76,9 +78,20 @@ public class GarageViewModel
 
     }
 
-    public string GetGarageInfo()
+    public string GetParkedCarsInfo()
     {
         return collection.ToString();
     }
+    public string GetCreatedVehicles()
+    {
+        StringBuilder sb = new();
+
+        foreach (Vehicle item in _createdVehicles)
+        {
+            sb.Append($"{item.ToString()}\n");
+        }
+        return sb.ToString();
+    }
+
 }
 
