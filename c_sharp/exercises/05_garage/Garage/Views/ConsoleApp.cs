@@ -1,17 +1,11 @@
 using System;
+using Garage.Models.Records;
 using Garage.ViewModels;
 
 namespace Garage.Views;
 
 public class ConsoleApp
 {
-
-    private record VehicleDetails(
-        string Registration,
-        string Brand,
-        string Color,
-        int WheelCount
-        );
 
 
     private GarageViewModel _gvm = new();
@@ -89,7 +83,6 @@ public class ConsoleApp
 
     private VehicleDetails ReadVehicleDetails()
     {
-
         while (true)
         {
             string input = ReadString(query: "Enter the format: brand, registration, color, wheel count");
