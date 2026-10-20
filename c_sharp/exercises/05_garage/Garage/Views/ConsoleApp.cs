@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using Garage.Models.Records;
 using Garage.Models.Vehicles;
 using Garage.ViewModels;
@@ -102,7 +103,66 @@ public class ConsoleApp
 
     private void SearchView()
     {
-        System.Console.WriteLine("Not implemented yet...");
+
+        VehicleDetails details = new();
+        string input = ReadString(query: "Search with following format (at least one): reg: <reg>, color: <color>, brand: <brand>, wheels: <number of wheels>");
+        string[] parts = input.Split(',');
+
+        foreach (string part in parts)
+        {
+            int colonIndex = part.IndexOf(":");
+            string key = part[..colonIndex].Trim();
+            string value = part[(colonIndex + 1)..].Trim();
+
+            switch (key.ToLower())
+            {
+                case "reg":
+                    details.Registration = value;
+                    break;
+                case "color":
+                    details.Color = value;
+                    break;
+                case "brand":
+                    details.Brand = value;
+                    break;
+                case "wheels":
+                    if (int.TryParse(value, out int result) && result >= 0)
+                    {
+                        details.WheelCount = result;
+                    }
+                    else
+                    {
+                        System.Console.WriteLine("Invalid wheels parameter or non-positive value");
+                        return;
+                    }
+                    break;
+                default:
+                    System.Console.WriteLine("Failed to parse search query.");
+                    return;
+            }
+        }
+
+        if (_gvm.Search(details, out Vehicle[] items))
+        {
+            if (items.Length == 0)
+            {
+                System.Console.WriteLine("No matches");
+            }
+            else
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("Search results:\n”");
+                System.Console.WriteLine("========================================");
+                foreach (var item in items)
+                {
+                    sb.Append($"{item}\n");
+                }
+            }
+        }
+        else
+        {
+            System.Console.WriteLine("Search failed.");
+        }
     }
 
     private void ParkVehicleView()
@@ -111,7 +171,7 @@ public class ConsoleApp
         {
             System.Console.WriteLine("Vehicle was parked.");
         }
-        else System.Console.WriteLine("Failed to park. Vehicle doesnt exist / vehicle already parked");
+        else System.Console.WriteLine("Failed to park. Garage full or vehicle doesnt exist or already parked");
     }
 
     private void UnparkVehicleView()
