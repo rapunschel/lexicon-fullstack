@@ -151,6 +151,11 @@ public class GarageViewModel
         {
             _createdVehicles[_pointer++] = v;
         }
+
+        for (int i = 0; i * 4 < vehicles.Length; i++)
+        {
+            _collection.Add(vehicles[i * 3]);
+        }
     }
 
 }
