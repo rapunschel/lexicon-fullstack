@@ -1,3 +1,4 @@
+using System;
 using Garage.Models.Vehicles;
 
 namespace Garage.Models.Records;
@@ -22,12 +23,12 @@ public record VehicleDetails
     {
 
     }
-
     public virtual bool Matches(Vehicle item)
     {
-        return (Brand == "" || Brand == item.Brand) &&
-               (Color == "" || Color == item.Color) &&
-               (Registration == "" || Registration == item.Color) &&
+        return (string.IsNullOrEmpty(Brand) || string.Equals(Brand, item.Brand, StringComparison.OrdinalIgnoreCase)) &&
+               (string.IsNullOrEmpty(Color) || string.Equals(Color, item.Color, StringComparison.OrdinalIgnoreCase)) &&
+               (string.IsNullOrEmpty(Registration) || string.Equals(Registration, item.RegNumber, StringComparison.OrdinalIgnoreCase)) &&
                (WheelCount == -1 || WheelCount == item.WheelCount);
+
     }
 }
