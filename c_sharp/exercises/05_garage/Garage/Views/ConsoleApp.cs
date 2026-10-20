@@ -24,16 +24,17 @@ public class ConsoleApp
     private GarageViewModel _gvm = new();
     public void Run()
     {
+        bool isGarageCreated = false;
         const string headMenuMessage = "Welcome to the Garage";
         const string menuCmdsMessage = "\n0: To exit program.\n" +
-                         "1: Create Garage.\n" +
+                         "1: Create Garage (this will override existing garage).\n" +
                          "2: Create vehicle.\n" +
                          "3: Park vehicle in garage\n" +
                          "4: Search vehicle in garage.\n" +
                          "5: Take out vehicle from garage.\n" +
                          "6: List all parked vehicles\n" +
                          "7: List all unparked vehicles\n" +
-                         "8: Creates unparked vehicles of various types for testing";
+                         "8: Creates vehicles and populates garage with a few vehicles if it has available spaces";
 
 
         const string invalidCmdMessage = "Invalid command";
@@ -41,65 +42,97 @@ public class ConsoleApp
         bool isRunning = true;
         while (isRunning)
         {
-            System.Console.WriteLine("========================================");
-            System.Console.WriteLine(menuCmdsMessage);
-            System.Console.WriteLine("========================================");
 
-            if (int.TryParse(Console.ReadLine(), out int command))
+            if (isGarageCreated)
             {
-                switch ((Command)command)
+                System.Console.WriteLine("========================================");
+                System.Console.WriteLine(menuCmdsMessage);
+                System.Console.WriteLine("========================================");
+
+                if (int.TryParse(Console.ReadLine(), out int command))
                 {
-                    case Command.Exit:
-                        isRunning = false;
-                        break;
-                    case Command.CreateGarage:
-                        CreateGarageCollection();
-                        WaitForUserKeyPress();
-                        break;
-                    case Command.CreateVehicle:
-                        CreateVehicleView();
-                        WaitForUserKeyPress();
-                        break;
-                    case Command.ParkVehicle:
-                        ParkVehicleView();
-                        WaitForUserKeyPress();
-                        break;
-                    case Command.RemoveFromGarage:
-                        UnparkVehicleView();
-                        WaitForUserKeyPress();
-                        break;
-                    case Command.Search:
-                        SearchView();
-                        WaitForUserKeyPress();
-                        break;
-                    case Command.ShowParked:
-                        ShowParkedVehicles();
-                        WaitForUserKeyPress();
-                        break;
-                    case Command.ShowNotParked:
-                        System.Console.WriteLine(_gvm.GetNotParkedVehicles());
-                        WaitForUserKeyPress();
-                        break;
-                    case Command.InitTestData:
-                        try
-                        {
-                            _gvm.InitTestData();
-                            System.Console.WriteLine("Vehicles created.");
-                        }
-                        catch (Exception ex)
-                        {
-                            System.Console.WriteLine(ex.Message);
-                        }
-                        break;
-                    default:
-                        System.Console.WriteLine(invalidCmdMessage);
-                        break;
+
+                    switch ((Command)command)
+                    {
+                        case Command.Exit:
+                            isRunning = false;
+                            break;
+                        case Command.CreateGarage:
+                            CreateGarageCollection();
+                            WaitForUserKeyPress();
+                            break;
+                        case Command.CreateVehicle:
+                            CreateVehicleView();
+                            WaitForUserKeyPress();
+                            break;
+                        case Command.ParkVehicle:
+                            ParkVehicleView();
+                            WaitForUserKeyPress();
+                            break;
+                        case Command.RemoveFromGarage:
+                            UnparkVehicleView();
+                            WaitForUserKeyPress();
+                            break;
+                        case Command.Search:
+                            SearchView();
+                            WaitForUserKeyPress();
+                            break;
+                        case Command.ShowParked:
+                            ShowParkedVehicles();
+                            WaitForUserKeyPress();
+                            break;
+                        case Command.ShowNotParked:
+                            System.Console.WriteLine(_gvm.GetNotParkedVehicles());
+                            WaitForUserKeyPress();
+                            break;
+                        case Command.InitTestData:
+                            try
+                            {
+                                _gvm.InitTestData();
+                                System.Console.WriteLine("Test data added");
+                                WaitForUserKeyPress();
+
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Console.WriteLine(ex.Message);
+                            }
+                            break;
+                        default:
+                            System.Console.WriteLine(invalidCmdMessage);
+                            break;
+                    }
+
                 }
+                else System.Console.WriteLine(invalidCmdMessage);
+            }
+            else
+            {
+                System.Console.WriteLine("\n0: To exit program.\n" +
+                         "1: Create Garage.\n");
+
+                if (int.TryParse(Console.ReadLine(), out int command))
+                {
+
+                    switch ((Command)command)
+                    {
+                        case Command.Exit:
+                            isRunning = false;
+                            break;
+                        case Command.CreateGarage:
+                            CreateGarageCollection();
+                            WaitForUserKeyPress();
+                            isGarageCreated = true;
+                            break;
+                    }
+                }
+                else System.Console.WriteLine(invalidCmdMessage);
 
             }
-            else System.Console.WriteLine(invalidCmdMessage);
         }
     }
+
+
 
     private void SearchView()
     {
@@ -151,12 +184,14 @@ public class ConsoleApp
             else
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append("Search results:\n”");
+                sb.Append("Search results:\n");
                 System.Console.WriteLine("========================================");
                 foreach (var item in items)
                 {
                     sb.Append($"{item}\n");
                 }
+
+                System.Console.WriteLine(sb.ToString());
             }
         }
         else
@@ -349,7 +384,8 @@ public class ConsoleApp
 
     private void ShowParkedVehicles()
     {
-        System.Console.WriteLine(_gvm.GetParkedCarsInfo());
+        string output = _gvm.GetParkedCarsInfo();
+        System.Console.WriteLine(output == "" ? "No garage is initated" : output);
     }
 
 
