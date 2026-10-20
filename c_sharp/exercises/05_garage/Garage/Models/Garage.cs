@@ -57,6 +57,7 @@ public class GarageCollection<T> where T : Vehicle
         bool result = false;
         for (int i = 0; i < _storage.Length; i++)
         {
+            if (_storage[i] == null) continue;
             if (result)
             {
                 // Shift everything to the left
