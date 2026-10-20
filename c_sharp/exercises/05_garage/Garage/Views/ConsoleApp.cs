@@ -21,10 +21,11 @@ public class ConsoleApp
         ShowNotParked = 7,
         InitTestData = 8
     }
-    private GarageViewModel _gvm = new();
+
+    private GarageViewModel _gvm = default!;
+
     public void Run()
     {
-        bool isGarageCreated = false;
         const string headMenuMessage = "Welcome to the Garage";
         const string menuCmdsMessage = "\n0: To exit program.\n" +
                          "1: Create Garage (this will override existing garage).\n" +
@@ -43,7 +44,7 @@ public class ConsoleApp
         while (isRunning)
         {
 
-            if (isGarageCreated)
+            if (_gvm != null)
             {
                 System.Console.WriteLine("========================================");
                 System.Console.WriteLine(menuCmdsMessage);
@@ -96,6 +97,7 @@ public class ConsoleApp
                             catch (Exception ex)
                             {
                                 System.Console.WriteLine(ex.Message);
+                                WaitForUserKeyPress();
                             }
                             break;
                         default:
@@ -120,9 +122,10 @@ public class ConsoleApp
                             isRunning = false;
                             break;
                         case Command.CreateGarage:
-                            CreateGarageCollection();
+                            int capacity = ReadPositiveInt(query: "How many parking spaces?");
+                            _gvm = new GarageViewModel(capacity);
+                            System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
                             WaitForUserKeyPress();
-                            isGarageCreated = true;
                             break;
                     }
                 }
@@ -223,7 +226,7 @@ public class ConsoleApp
         while (true)
         {
             int capacity = ReadPositiveInt(query: "How many parking spaces?");
-            if (_gvm.CreateGarageCollection(capacity))
+            if (_gvm.CreateNewGarageCollection(capacity))
             {
                 System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
                 return;
