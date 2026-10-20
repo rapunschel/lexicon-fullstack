@@ -10,20 +10,13 @@ namespace Garage.ViewModels;
 public class GarageViewModel
 {
 
-    private GarageCollection<Vehicle> _collection = default!;
+    private GarageCollection<Vehicle> _collection = new(0);
     private Vehicle[] _createdVehicles = new Vehicle[500]; // Too lazy to manually expand will just refactor to list in the future anyway
     private int _pointer = 0;
     public bool CreateGarageCollection(int capacity)
     {
-        try
-        {
-            _collection = new GarageCollection<Vehicle>(capacity);
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
+        _collection = new GarageCollection<Vehicle>(capacity);
+        return true;
     }
 
     public bool ParkVehicle(string registration)
@@ -42,6 +35,13 @@ public class GarageViewModel
         }
 
         return false;
+    }
+
+    public bool Search<T>(T details, out Vehicle[] vehicles) where T : VehicleDetails
+    {
+
+        vehicles = _collection.Search(details.Matches);
+        return true;
     }
 
     public bool RemoveParkedVehicle(string registration)
