@@ -55,7 +55,6 @@ public class GarageCollection
         bool result = false;
         for (int i = 0; i < _storage.Length; i++)
         {
-            if (_storage[i] == null) continue;
             if (result)
             {
                 // Shift everything to the left
@@ -67,7 +66,7 @@ public class GarageCollection
                     _storage[i] = default!;
                 }
             }
-            else if (string.Equals(_storage[i].RegNumber, regNumber, StringComparison.OrdinalIgnoreCase))
+            else if (_storage[i] != null && string.Equals(_storage[i].RegNumber, regNumber, StringComparison.OrdinalIgnoreCase))
             {
                 result = true;
                 _pointer--;
