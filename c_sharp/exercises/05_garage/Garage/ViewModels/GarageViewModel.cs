@@ -40,7 +40,7 @@ public class GarageViewModel
                 new Motorcycle("Kawasaki", "MOTO-104", "Green", 2, 2),
                 new Motorcycle("Suzuki", "MOTO-105", "Black", 2, 1)
             };
-    private GarageCollection<Vehicle> _collection;
+    private GarageCollection _collection;
     private Vehicle[] _createdVehicles = new Vehicle[500]; // Too lazy to manually expand will just refactor to list in the future anyway
     private int _pointer = 0;
     private bool _testDataLoaded = false;
@@ -48,13 +48,13 @@ public class GarageViewModel
 
     public GarageViewModel(int capacity)
     {
-        _collection = new GarageCollection<Vehicle>(capacity);
+        _collection = new GarageCollection(capacity);
     }
 
 
     public bool CreateNewGarageCollection(int capacity)
     {
-        _collection = new GarageCollection<Vehicle>(capacity);
+        _collection = new GarageCollection(capacity);
         return true;
     }
 
@@ -75,7 +75,7 @@ public class GarageViewModel
         return false;
     }
 
-    public bool Search<T>(T details, out Vehicle[] vehicles) where T : VehicleDetails
+    public bool Search(VehicleDetails details, out Vehicle[] vehicles)
     {
         vehicles = _collection.Search(details.Matches);
         return true;

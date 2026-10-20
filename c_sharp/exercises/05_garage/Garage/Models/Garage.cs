@@ -1,30 +1,28 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Garage.Models.Vehicles;
 
 namespace Garage.Models;
 
-public class GarageCollection<T> where T : Vehicle
+public class GarageCollection
 {
-    private T[] _storage;
+    private Vehicle[] _storage;
     private int _pointer = 0;
 
-    public GarageCollection(T[] items)
+    public GarageCollection(Vehicle[] items)
     {
         _storage = [.. items];
     }
 
     public GarageCollection(int capacity)
     {
-        _storage = new T[capacity];
+        _storage = new Vehicle[capacity];
     }
 
 
-    public T[] Search(Func<T, bool> matches)
+    public Vehicle[] Search(Func<Vehicle, bool> matches)
     {
-        T[] result = new T[_storage.Length];
+        Vehicle[] result = new Vehicle[_storage.Length];
         int count = 0;
         for (int i = 0; i < _storage.Length; i++)
         {
@@ -38,7 +36,7 @@ public class GarageCollection<T> where T : Vehicle
         return result;
     }
 
-    public bool Add(T item)
+    public bool Add(Vehicle item)
     {
         if (_pointer >= _storage.Length) return false;
 
