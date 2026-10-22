@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Garage.Models;
 using Garage.Models.Records;
@@ -41,8 +42,7 @@ public class GarageViewModel
                 new Motorcycle("Suzuki", "MOTO-105", "Black", 2, 1)
             };
     private GarageCollection _collection;
-    private Vehicle[] _createdVehicles = new Vehicle[500]; // Too lazy to manually expand will just refactor to list in the future anyway
-    private int _pointer = 0;
+    private List<Vehicle> _createdVehicles = [];
     private bool _testDataLoaded = false;
 
 
@@ -75,7 +75,7 @@ public class GarageViewModel
         return false;
     }
 
-    public bool Search(VehicleDetails details, out Vehicle[] vehicles)
+    public bool Search(VehicleDetails details, out List<Vehicle> vehicles)
     {
         vehicles = _collection.Search(details.Matches);
         return true;
@@ -122,7 +122,7 @@ public class GarageViewModel
                     break;
 
             }
-            _createdVehicles[_pointer++] = vehicle;
+            _createdVehicles.Add(vehicle);
             return true;
         }
         catch (Exception ex)
@@ -156,7 +156,7 @@ public class GarageViewModel
             _testDataLoaded = true;
             foreach (var v in testData)
             {
-                _createdVehicles[_pointer++] = v;
+                _createdVehicles.Add(v);
             }
         }
 

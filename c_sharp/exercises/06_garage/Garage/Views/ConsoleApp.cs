@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Garage.Models.Records;
 using Garage.Models.Vehicles;
@@ -178,9 +179,9 @@ public class ConsoleApp
             }
         }
 
-        if (_gvm.Search(details, out Vehicle[] items))
+        if (_gvm.Search(details, out List<Vehicle> items))
         {
-            if (items.Length == 0)
+            if (items.Count == 0)
             {
                 System.Console.WriteLine("No matches");
             }

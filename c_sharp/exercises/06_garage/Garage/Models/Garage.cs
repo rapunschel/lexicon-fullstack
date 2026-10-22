@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Garage.Models.Vehicles;
 
@@ -6,87 +8,68 @@ namespace Garage.Models;
 
 public class GarageCollection
 {
-    private Vehicle[] _storage;
-    private int _pointer = 0;
+    private List<Vehicle> _storage = new List<Vehicle>();
+    private int _capacity = 0;
 
-    public GarageCollection(Vehicle[] items)
+    public GarageCollection(List<Vehicle> items)
     {
-        _storage = [.. items];
+        foreach (var item in items)
+        {
+            _storage.Add(item.ShallowCopy());
+        }
     }
 
     public GarageCollection(int capacity)
     {
-        _storage = new Vehicle[capacity];
+        _capacity = capacity;
     }
 
 
-    public Vehicle[] Search(Func<Vehicle, bool> matches)
+    public List<Vehicle> Search(Func<Vehicle, bool> matches)
     {
-        Vehicle[] result = new Vehicle[_storage.Length];
-        int count = 0;
-        for (int i = 0; i < _storage.Length; i++)
-        {
-            if (_storage[i] == null) continue;
-            if (matches(_storage[i]))
-            {
-                result[count++] = _storage[i];
-            }
-        }
-        Array.Resize(ref result, count);
-        return result;
+        return _storage.FindAll(item => matches(item)).ConvertAll(item => item.ShallowCopy());
     }
 
     public bool Add(Vehicle item)
     {
-        if (_pointer >= _storage.Length) return false;
+        if (_storage.Count >= _capacity) return false;
 
-        // Ensure no clones can be added
-        for (int i = 0; i < _storage.Length; i++)
+        if (FindVehicle(item.RegNumber, out Vehicle? _))
         {
-            if (_storage[i] == null) continue;
-            if (string.Equals(_storage[i].RegNumber, item.RegNumber, StringComparison.OrdinalIgnoreCase)) return false;
+            return false;
         }
-        _storage[_pointer++] = item;
+
+        _storage.Add(item);
         return true;
     }
 
     public bool Remove(string regNumber)
     {
-        bool result = false;
-        for (int i = 0; i < _storage.Length; i++)
+        if (FindVehicle(regNumber, out Vehicle? vehicle))
         {
-            if (result)
-            {
-                // Shift everything to the left
-                _storage[i - 1] = _storage[i];
-
-                // If last is shifted, set to default
-                if (i == _storage.Length - 1)
-                {
-                    _storage[i] = default!;
-                }
-            }
-            else if (_storage[i] != null && string.Equals(_storage[i].RegNumber, regNumber, StringComparison.OrdinalIgnoreCase))
-            {
-                result = true;
-                _pointer--;
-            }
+            _storage.Remove(vehicle);
+            return true;
         }
-
-        return result;
+        return false;
+    }
+    private bool FindVehicle(string regNumber, [NotNullWhen(true)] out Vehicle? vehicle)
+    {
+        vehicle = _storage.Find(vehicle => string.Equals(vehicle.RegNumber, regNumber, StringComparison.OrdinalIgnoreCase));
+        if (vehicle == null) return false;
+        return true;
     }
 
     public override string ToString()
     {
         StringBuilder sb = new();
-        for (int i = 0; i < _storage.Length; i++)
+        foreach (var item in _storage)
         {
-            if (_storage[i] == null)
-            {
-                sb.Append("empty parking slot \n");
-                continue;
-            }
-            sb.Append($"{_storage[i].ToString()}\n");
+            sb.Append($"{item.ToString()}\n");
+
+        }
+        for (int i = 0; i < _capacity - _storage.Count; i++)
+        {
+            sb.Append("empty parking slot \n");
         }
 
         return sb.ToString();
