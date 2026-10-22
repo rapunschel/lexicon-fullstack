@@ -1,0 +1,460 @@
+using System;
+using System.Text;
+using Garage.Models.Records;
+using Garage.Models.Vehicles;
+using Garage.ViewModels;
+
+namespace Garage.Views;
+
+public class ConsoleApp
+{
+
+    private enum Command
+    {
+        Exit = 0,
+        CreateGarage = 1,
+        CreateVehicle = 2,
+        ParkVehicle = 3,
+        Search = 4,
+        RemoveFromGarage = 5,
+        ShowParked = 6,
+        ShowNotParked = 7,
+        InitTestData = 8
+    }
+
+    private GarageViewModel _gvm = default!;
+
+    public void Run()
+    {
+        const string headMenuMessage = "Welcome to the Garage";
+        const string menuCmdsMessage = "\n0: To exit program.\n" +
+                         "1: Create Garage (this will override existing garage).\n" +
+                         "2: Create vehicle.\n" +
+                         "3: Park vehicle in garage\n" +
+                         "4: Search vehicle in garage.\n" +
+                         "5: Take out vehicle from garage.\n" +
+                         "6: List all parked vehicles\n" +
+                         "7: List all unparked vehicles\n" +
+                         "8: Creates vehicles and populates garage with a few vehicles if it has available spaces";
+
+
+        const string invalidCmdMessage = "Invalid command";
+        System.Console.WriteLine(headMenuMessage);
+        bool isRunning = true;
+        while (isRunning)
+        {
+
+            if (_gvm != null)
+            {
+                System.Console.WriteLine("========================================");
+                System.Console.WriteLine(menuCmdsMessage);
+                System.Console.WriteLine("========================================");
+
+                if (int.TryParse(Console.ReadLine(), out int command))
+                {
+
+                    switch ((Command)command)
+                    {
+                        case Command.Exit:
+                            isRunning = false;
+                            break;
+                        case Command.CreateGarage:
+                            CreateGarageCollection();
+                            WaitForUserKeyPress();
+                            break;
+                        case Command.CreateVehicle:
+                            CreateVehicleView();
+                            WaitForUserKeyPress();
+                            break;
+                        case Command.ParkVehicle:
+                            ParkVehicleView();
+                            WaitForUserKeyPress();
+                            break;
+                        case Command.RemoveFromGarage:
+                            UnparkVehicleView();
+                            WaitForUserKeyPress();
+                            break;
+                        case Command.Search:
+                            SearchView();
+                            WaitForUserKeyPress();
+                            break;
+                        case Command.ShowParked:
+                            ShowParkedVehicles();
+                            WaitForUserKeyPress();
+                            break;
+                        case Command.ShowNotParked:
+                            System.Console.WriteLine(_gvm.GetNotParkedVehicles());
+                            WaitForUserKeyPress();
+                            break;
+                        case Command.InitTestData:
+                            try
+                            {
+                                _gvm.InitTestData();
+                                System.Console.WriteLine("Test data added");
+                                WaitForUserKeyPress();
+
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Console.WriteLine(ex.Message);
+                                WaitForUserKeyPress();
+                            }
+                            break;
+                        default:
+                            System.Console.WriteLine(invalidCmdMessage);
+                            break;
+                    }
+
+                }
+                else System.Console.WriteLine(invalidCmdMessage);
+            }
+            else
+            {
+                System.Console.WriteLine("\n0: To exit program.\n" +
+                         "1: Create Garage.\n");
+
+                if (int.TryParse(Console.ReadLine(), out int command))
+                {
+
+                    switch ((Command)command)
+                    {
+                        case Command.Exit:
+                            isRunning = false;
+                            break;
+                        case Command.CreateGarage:
+                            int capacity = ReadPositiveInt(query: "How many parking spaces?");
+                            _gvm = new GarageViewModel(capacity);
+                            System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
+                            WaitForUserKeyPress();
+                            break;
+                    }
+                }
+                else System.Console.WriteLine(invalidCmdMessage);
+
+            }
+        }
+    }
+
+
+
+    private void SearchView()
+    {
+
+        VehicleDetails details = new();
+        string input = ReadString(query: "Search with following format (at least one): reg: <reg>, color: <color>, brand: <brand>, wheels: <number of wheels>");
+        string[] parts = input.Split(',');
+
+        foreach (string part in parts)
+        {
+            int colonIndex = part.IndexOf(":");
+            string key = part[..colonIndex].Trim();
+            string value = part[(colonIndex + 1)..].Trim();
+
+            switch (key.ToLower())
+            {
+                case "reg":
+                    details.Registration = value;
+                    break;
+                case "color":
+                    details.Color = value;
+                    break;
+                case "brand":
+                    details.Brand = value;
+                    break;
+                case "wheels":
+                    if (int.TryParse(value, out int result) && result >= 0)
+                    {
+                        details.WheelCount = result;
+                    }
+                    else
+                    {
+                        System.Console.WriteLine("Invalid wheels parameter or non-positive value");
+                        return;
+                    }
+                    break;
+                default:
+                    System.Console.WriteLine("Failed to parse search query.");
+                    return;
+            }
+        }
+
+        if (_gvm.Search(details, out Vehicle[] items))
+        {
+            if (items.Length == 0)
+            {
+                System.Console.WriteLine("No matches");
+            }
+            else
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("Search results:\n");
+                System.Console.WriteLine("========================================");
+                foreach (var item in items)
+                {
+                    sb.Append($"{item}\n");
+                }
+
+                System.Console.WriteLine(sb.ToString());
+            }
+        }
+        else
+        {
+            System.Console.WriteLine("Search failed.");
+        }
+    }
+
+    private void ParkVehicleView()
+    {
+        if (_gvm.ParkVehicle(ReadString(query: "Park vehicle with registration:")))
+        {
+            System.Console.WriteLine("Vehicle was parked.");
+        }
+        else System.Console.WriteLine("Failed to park. Garage full or vehicle doesnt exist or already parked");
+    }
+
+    private void UnparkVehicleView()
+    {
+        if (_gvm.RemoveParkedVehicle(ReadString(query: "Remove vehicle from garage with registration:")))
+        {
+            System.Console.WriteLine("Vehicle was taken out of garage.");
+        }
+        else System.Console.WriteLine("Vehicle not found");
+
+    }
+    private void CreateGarageCollection()
+    {
+        while (true)
+        {
+            int capacity = ReadPositiveInt(query: "How many parking spaces?");
+            if (_gvm.CreateNewGarageCollection(capacity))
+            {
+                System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
+                return;
+            }
+            System.Console.WriteLine("Error creating garage. Try again.");
+        }
+    }
+
+    private VehicleDetails ReadVehicleDetails()
+    {
+        while (true)
+        {
+            string input = ReadString(query: "Enter the format: brand, registration, color, wheel count");
+            string[] strings = input.Split(',');
+
+            if (int.TryParse(strings[3].Trim(), out int wheelCount))
+            {
+                return new VehicleDetails(Brand: strings[0].Trim(), Registration: strings[1].Trim(), Color: strings[2].Trim(), WheelCount: wheelCount);
+            }
+            else
+            {
+                System.Console.WriteLine("Invalid input. Try again\n");
+            }
+        }
+    }
+
+    private void CreateVehicleView()
+    {
+        void CreateCar(VehicleType type)
+        {
+            CarDetails details = CreateVehicle(common =>
+            {
+                int engineCount = ReadPositiveInt(query: "Enter number of engines:");
+                return new CarDetails(common.Registration, common.Brand, common.Color, common.WheelCount, engineCount);
+            });
+            ValidateCreation(_gvm.CreateVehicle(details, type, out string? error), error);
+        }
+
+        void CreateBus(VehicleType type)
+        {
+            BusDetails details = CreateVehicle(common =>
+            {
+                return new BusDetails(common.Registration,
+                                      common.Brand,
+                                      common.Color,
+                                      common.WheelCount,
+                                      Length: ReadPositiveDouble(query: "Enter length of bus:"));
+            });
+            ValidateCreation(_gvm.CreateVehicle(details, type, out string? error), error);
+        }
+
+        void CreateMotorcycle(VehicleType type)
+        {
+            MotorcycleDetails details = CreateVehicle(common =>
+            {
+                return new MotorcycleDetails(common.Registration,
+                                      common.Brand,
+                                      common.Color,
+                                      common.WheelCount,
+                                      Seats: ReadPositiveInt(query: "How many seats:"));
+            });
+            ValidateCreation(_gvm.CreateVehicle(details, type, out string? error), error);
+        }
+
+        void CreateBoat(VehicleType type)
+        {
+            BoatDetails details = CreateVehicle(common =>
+            {
+                return new BoatDetails(common.Registration,
+                                      common.Brand,
+                                      common.Color,
+                                      common.WheelCount,
+                                      Fuel: ReadFuelTypeEnum(query: "Fuel type (Gasoline / Diesel): "));
+            });
+            ValidateCreation(_gvm.CreateVehicle(details, type, out string? error), error);
+        }
+
+        void CreateAirPlane(VehicleType type)
+        {
+            AirplaneDetails details = CreateVehicle(common =>
+            {
+                return new AirplaneDetails(common.Registration,
+                                      common.Brand,
+                                      common.Color,
+                                      common.WheelCount,
+                                      Speed: ReadPositiveInt(query: "Enter speed:"));
+            });
+            ValidateCreation(_gvm.CreateVehicle(details, type, out string? error), error);
+        }
+
+        T CreateVehicle<T>(Func<VehicleDetails, T> createDetails) where T : VehicleDetails
+        {
+            T details = createDetails(ReadVehicleDetails());
+
+            return details;
+
+        }
+        void ValidateCreation(bool result, string? error)
+        {
+            if (result)
+            {
+                System.Console.WriteLine("Successfully created vehicle");
+            }
+            else
+            {
+                System.Console.WriteLine($"Error: {error}");
+            }
+        }
+
+
+        VehicleType? type = GetVehicleType(
+                            ReadString("Do you want to create: airplane, car, bus, motorcycle or boat?")
+                            );
+
+        if (type == null)
+        {
+            System.Console.WriteLine("Not a valid vehicle type");
+        }
+
+        switch (type)
+        {
+            case VehicleType.Car:
+                CreateCar((VehicleType)type);
+                return;
+            case VehicleType.Bus:
+                CreateBus((VehicleType)type);
+                return;
+            case VehicleType.Motorcycle:
+                CreateMotorcycle((VehicleType)type);
+
+                return;
+            case VehicleType.Boat:
+                CreateBoat((VehicleType)type);
+                return;
+            case VehicleType.Airplane:
+                CreateAirPlane((VehicleType)type);
+                return;
+        }
+
+    }
+
+
+
+    private VehicleType? GetVehicleType(string input)
+    {
+        foreach (VehicleType type in Enum.GetValues(typeof(VehicleType)))
+        {
+            if (string.Equals(type.ToString(), input,
+                            StringComparison.OrdinalIgnoreCase))
+            {
+                return type;
+            }
+        }
+        return null;
+    }
+
+
+
+    private void ShowParkedVehicles()
+    {
+        string output = _gvm.GetParkedCarsInfo();
+        System.Console.WriteLine(output == "" ? "No garage is initated" : output);
+    }
+
+
+    private FuelType ReadFuelTypeEnum(string query = "", string errorMessage = "Not a valid fuel type.")
+    {
+        while (true)
+        {
+            System.Console.WriteLine(query);
+            string? input = Console.ReadLine();
+            foreach (FuelType type in Enum.GetValues(typeof(FuelType)))
+            {
+                if (string.Equals(type.ToString(), input,
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    return type;
+                }
+                System.Console.WriteLine(errorMessage);
+            }
+        }
+    }
+    private string ReadString(string query = "", string errorMessage = "Empty string.")
+    {
+        while (true)
+        {
+            System.Console.WriteLine(query);
+            string? result = Console.ReadLine();
+
+            if (result == "" || result == null)
+            {
+                System.Console.WriteLine(errorMessage);
+                continue;
+            }
+            return result;
+        }
+    }
+
+    private double ReadPositiveDouble(string query, string errorMessage = "Not a valid number.")
+    {
+        while (true)
+        {
+            System.Console.WriteLine(query);
+            if (double.TryParse(Console.ReadLine(), out double number) && number >= 0)
+            {
+                return number;
+            }
+            else System.Console.WriteLine(errorMessage);
+        }
+    }
+
+    private int ReadPositiveInt(string query, string errorMessage = "Not a valid number.")
+    {
+        while (true)
+        {
+            System.Console.WriteLine(query);
+            if (int.TryParse(Console.ReadLine(), out int number) && number >= 0)
+            {
+                return number;
+            }
+            else System.Console.WriteLine(errorMessage);
+        }
+    }
+
+    private void WaitForUserKeyPress()
+    {
+        System.Console.WriteLine("\nPress any key to continue...");
+        Console.ReadKey();
+        System.Console.WriteLine();
+    }
+}
