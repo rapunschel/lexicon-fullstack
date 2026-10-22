@@ -258,7 +258,7 @@ public class ConsoleApp
     {
         void CreateCar(VehicleType type)
         {
-            CarDetails details = CreateVehicle(common =>
+            CarDetails details = (CarDetails)CreateVehicle(common =>
             {
                 int engineCount = ReadPositiveInt(query: "Enter number of engines:");
                 return new CarDetails(common.Registration, common.Brand, common.Color, common.WheelCount, engineCount);
@@ -268,7 +268,7 @@ public class ConsoleApp
 
         void CreateBus(VehicleType type)
         {
-            BusDetails details = CreateVehicle(common =>
+            BusDetails details = (BusDetails)CreateVehicle(common =>
             {
                 return new BusDetails(common.Registration,
                                       common.Brand,
@@ -281,7 +281,7 @@ public class ConsoleApp
 
         void CreateMotorcycle(VehicleType type)
         {
-            MotorcycleDetails details = CreateVehicle(common =>
+            MotorcycleDetails details = (MotorcycleDetails)CreateVehicle(common =>
             {
                 return new MotorcycleDetails(common.Registration,
                                       common.Brand,
@@ -294,7 +294,7 @@ public class ConsoleApp
 
         void CreateBoat(VehicleType type)
         {
-            BoatDetails details = CreateVehicle(common =>
+            BoatDetails details = (BoatDetails)CreateVehicle(common =>
             {
                 return new BoatDetails(common.Registration,
                                       common.Brand,
@@ -307,7 +307,7 @@ public class ConsoleApp
 
         void CreateAirPlane(VehicleType type)
         {
-            AirplaneDetails details = CreateVehicle(common =>
+            AirplaneDetails details = (AirplaneDetails)CreateVehicle(common =>
             {
                 return new AirplaneDetails(common.Registration,
                                       common.Brand,
@@ -318,9 +318,10 @@ public class ConsoleApp
             ValidateCreation(_gvm.CreateVehicle(details, type, out string? error), error);
         }
 
-        T CreateVehicle<T>(Func<VehicleDetails, T> createDetails) where T : VehicleDetails
+
+        VehicleDetails CreateVehicle(Func<VehicleDetails, VehicleDetails> createDetails)
         {
-            T details = createDetails(ReadVehicleDetails());
+            VehicleDetails details = createDetails(ReadVehicleDetails());
 
             return details;
 
