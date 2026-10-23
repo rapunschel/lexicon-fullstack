@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
@@ -14,7 +15,13 @@ namespace LinqOvningar
         public string Class { get; set; } = "";
         public int Points { get; set; }
 
+        public override string ToString()
+        {
+            return $"{Name} {Age} år. Klass: {Class}. Poäng: {Points}";
+        }
     }
+
+
     class Program
     {
         static void Main(string[] args)
@@ -35,8 +42,11 @@ namespace LinqOvningar
             Console.WriteLine("LINQ-ÖVNINGAR MED STUDENTER\n");
 
             System.Console.WriteLine("Where");
-            PrintTable([.. students.Where(s => s.Age >= 20)], "Hämta alla studenter som är äldre än 20.");
-            PrintTable([.. students.Where(s => s.Points >= 80)], "Hämta alla studenter som har mer än 80 poäng");
+            PrintTable([.. students.Where(s => s.Age > 20)], "Hämta alla studenter som är äldre än 20.");
+            PrintTable([.. students.Where(s => s.Points > 80)], "Hämta alla studenter som har mer än 80 poäng");
+
+
+            System.Console.WriteLine(new string('-', 71));
 
             System.Console.WriteLine("Select");
             PrintNames(students.Select(s => s.Name), "Visa bara namnen på alla studenter.");
@@ -47,10 +57,57 @@ namespace LinqOvningar
             {
                 Console.WriteLine(item.ToString());
             }
-            System.Console.WriteLine();
+            System.Console.WriteLine(new string('-', 71));
             System.Console.WriteLine("OrderBy");
             PrintTable(students.OrderByDescending(s => s.Age).ToList(), "Sortera studenter efter ålder.");
             PrintTable(students.OrderByDescending(s => s.Points).ToList(), "Sortera studenter efter poäng, högst först");
+
+
+            System.Console.WriteLine(new string('-', 71));
+            System.Console.WriteLine("Count");
+            System.Console.WriteLine($"Räkna hur många studenter som finns. {students.Count()}");
+            System.Console.WriteLine($"Räkna hur många som går i klass A {students.Count(s => s.Class == "A")}");
+
+
+            System.Console.WriteLine(new string('-', 71));
+            System.Console.WriteLine("Take");
+            PrintTable(students.Take(3).ToList(), "Ta ut de tre första studenterna.");
+            PrintTable(students.OrderByDescending(s => s.Points).Take(2).ToList(), "Ta ut de två bästa poängen efter sortering.");
+
+            System.Console.WriteLine(new string('-', 71));
+            System.Console.WriteLine("Distinct");
+            System.Console.WriteLine("Visa alla unika klassnamn.");
+            System.Console.WriteLine(string.Join(", ", students.Select(s => s.Class).Distinct()));
+            System.Console.WriteLine("Visa alla unika åldrar.");
+            System.Console.WriteLine(string.Join(", ", students.Select(s => s.Age).Distinct()));
+
+            System.Console.WriteLine(new string('-', 71));
+            System.Console.WriteLine("Any / All");
+            System.Console.WriteLine($"Finns det någon student med 100 poäng? {students.Any(s => s.Points == 100)}");
+            System.Console.WriteLine($"Har alla studenter minst 50 poäng? {students.All(s => s.Points >= 50)}");
+
+            System.Console.WriteLine(new string('-', 71));
+            System.Console.WriteLine("FirstOrDefault / Last / Single");
+            System.Console.WriteLine($"Hämta första studenten i klass B. {students.FirstOrDefault(s => s.Class == "B")}");
+            System.Console.WriteLine($"Hämta sista studenten i listan. {students.LastOrDefault()}");
+            System.Console.WriteLine($"Hämta studenten med ett visst Id (3). {students.Single(s => s.Id == 3)}");
+
+            System.Console.WriteLine(new string('-', 71));
+            System.Console.WriteLine("GroupBy");
+            System.Console.WriteLine("Gruppera studenter per klass & Skriv ut varje klass och namnen i gruppen..");
+            var byClass = students.GroupBy(s => s.Class);
+            foreach (var c in byClass)
+            {
+                PrintTable(c, $"Class {c.Key}");
+            }
+
+
+
+            System.Console.WriteLine(new string('-', 71));
+            System.Console.WriteLine("Sum / Average / Min / Max");
+            System.Console.WriteLine($"Sum: {students.Sum(s => s.Points)}");
+            System.Console.WriteLine($"Average: {students.Average(s => s.Points)}");
+            System.Console.WriteLine($"Lägsta: {students.Min(s => s.Points)} | Högsta: {students.Max(s => s.Points)}");
 
 
 
@@ -70,7 +127,7 @@ namespace LinqOvningar
             System.Console.WriteLine(sb.ToString());
         }
 
-        static void PrintTable(List<Student> students, string task)
+        static void PrintTable(IEnumerable<Student> students, string task)
         {
             const int offSet = -10;
             StringBuilder sb = new();
