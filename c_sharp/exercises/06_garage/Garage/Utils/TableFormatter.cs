@@ -10,9 +10,10 @@ public static class TableFormatter
     public static StringBuilder FormatTable(List<Vehicle> vehicles)
     {
         StringBuilder sb = new();
-        const int offset = -15;
+        const int offset = -20;
         sb.Append($"{"Type",offset} {"Brand",offset} {"Registration",offset} {"Color",offset} {"Wheels",offset} {"Details",offset}\n");
-
+        sb.Append(new string('=', Math.Abs(offset * 6)));
+        sb.Append("\n");
         foreach (var item in vehicles)
         {
             string typeName = item switch
