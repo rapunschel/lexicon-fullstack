@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 namespace Garage.Models.Vehicles;
 
 public class Vehicle
@@ -12,13 +13,17 @@ public class Vehicle
         get;
         private set
         {
-            value = value.ToUpper();
-            if (set.Contains(value)) throw new ArgumentException("Reg number is not unique");
+            string normalized = value.Trim().ToUpperInvariant();
 
-            field = string.IsNullOrEmpty(value) ? throw new ArgumentException("Registration number cant be empty")
-                : value;
+            if (!Regex.IsMatch(normalized, @"\A[A-Z]{3}[0-9]{3}\z"))
+                throw new ArgumentException(
+                    "Registration number must be 3 letters followed by 3 digits. Example: abc123");
 
-            set.Add(value);
+            if (set.Contains(normalized))
+                throw new ArgumentException("Reg number is not unique");
+
+            field = normalized;
+            set.Add(normalized);
         }
     }
     public string Color

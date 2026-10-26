@@ -12,36 +12,36 @@ public class GarageViewModel
 {
     Vehicle[] testData =
     {
-                new Airplane("Boeing", "AIR-101", "White", 6, 850),
-                new Airplane("Airbus", "AIR-102", "Blue", 6, 900),
-                new Airplane("Cessna", "AIR-103", "White", 3, 300),
-                new Airplane("Embraer", "AIR-104", "Red", 6, 870),
-                new Airplane("Bombardier", "AIR-105", "Blue", 8, 920),
+    new Airplane("Boeing", "AIR101", "White", 6, 850),
+    new Airplane("Airbus", "AIR102", "Blue", 6, 900),
+    new Airplane("Cessna", "AIR103", "White", 3, 300),
+    new Airplane("Embraer", "AIR104", "Red", 6, 870),
+    new Airplane("Bombardier", "AIR105", "Blue", 8, 920),
 
-                new Boat("Yamaha", "BOAT-101", "White", 0, FuelType.Gasoline),
-                new Boat("Bayliner", "BOAT-102", "Blue", 0, FuelType.Diesel),
-                new Boat("Sea Ray", "BOAT-103", "Red", 0, FuelType.Gasoline),
-                new Boat("Jeanneau", "BOAT-104", "White", 0, FuelType.Diesel),
-                new Boat("Boston Whaler", "BOAT-105", "Blue", 0, FuelType.Gasoline),
+    new Boat("Yamaha", "BOA101", "White", 0, FuelType.Gasoline),
+    new Boat("Bayliner", "BOA102", "Blue", 0, FuelType.Diesel),
+    new Boat("Sea Ray", "BOA103", "Red", 0, FuelType.Gasoline),
+    new Boat("Jeanneau", "BOA104", "White", 0, FuelType.Diesel),
+    new Boat("Boston Whaler", "BOA105", "Blue", 0, FuelType.Gasoline),
 
-                new Bus("Volvo", "BUS-101", "Yellow", 6, 12.0),
-                new Bus("Mercedes-Benz", "BUS-102", "Blue", 6, 10.5),
-                new Bus("Scania", "BUS-103", "White", 8, 14.0),
-                new Bus("MAN", "BUS-104", "Red", 6, 11.2),
-                new Bus("Iveco", "BUS-105", "Yellow", 4, 9.8),
+    new Bus("Volvo", "BUS101", "Yellow", 6, 12.0),
+    new Bus("Mercedes-Benz", "BUS102", "Blue", 6, 10.5),
+    new Bus("Scania", "BUS103", "White", 8, 14.0),
+    new Bus("MAN", "BUS104", "Red", 6, 11.2),
+    new Bus("Iveco", "BUS105", "Yellow", 4, 9.8),
 
-                new Car("Toyota", "CAR-101", "Red", 4, 1),
-                new Car("Volvo", "CAR-102", "Blue", 4, 1),
-                new Car("Ford", "CAR-103", "White", 4, 1),
-                new Car("BMW", "CAR-104", "Black", 4, 1),
-                new Car("Honda", "CAR-105", "Red", 4, 2),
+    new Car("Toyota", "CAR101", "Red", 4, 1),
+    new Car("Volvo", "CAR102", "Blue", 4, 1),
+    new Car("Ford", "CAR103", "White", 4, 1),
+    new Car("BMW", "CAR104", "Black", 4, 1),
+    new Car("Honda", "CAR105", "Red", 4, 2),
 
-                new Motorcycle("Honda", "MOTO-101", "Black", 2, 2),
-                new Motorcycle("Yamaha", "MOTO-102", "Blue", 2, 2),
-                new Motorcycle("Ducati", "MOTO-103", "Red", 2, 1),
-                new Motorcycle("Kawasaki", "MOTO-104", "Green", 2, 2),
-                new Motorcycle("Suzuki", "MOTO-105", "Black", 2, 1)
-            };
+    new Motorcycle("Honda", "MOT101", "Black", 2, 2),
+    new Motorcycle("Yamaha", "MOT102", "Blue", 2, 2),
+    new Motorcycle("Ducati", "MOT103", "Red", 2, 1),
+    new Motorcycle("Kawasaki", "MOT104", "Green", 2, 2),
+    new Motorcycle("Suzuki", "MOT105", "Black", 2, 1)
+};
     private GarageCollection _collection;
     private List<Vehicle> _createdVehicles = [];
     private bool _testDataLoaded = false;
