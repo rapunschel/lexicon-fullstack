@@ -4,6 +4,7 @@ using System.Text;
 using Garage.Models;
 using Garage.Models.Records;
 using Garage.Models.Vehicles;
+using Garage.Utils;
 
 namespace Garage.ViewModels;
 
@@ -139,13 +140,7 @@ public class GarageViewModel
     }
     public string GetNotParkedVehicles()
     {
-        StringBuilder sb = new();
-
-        foreach (Vehicle item in _createdVehicles)
-        {
-            if (item == null) continue;
-            sb.Append($"{item.ToString()}\n");
-        }
+        StringBuilder sb = TableFormatter.FormatTable(_createdVehicles);
         return sb.ToString();
     }
 

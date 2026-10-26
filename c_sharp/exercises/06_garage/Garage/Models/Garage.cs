@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Garage.Models.Vehicles;
+using Garage.Utils;
 
 namespace Garage.Models;
 
@@ -61,17 +62,8 @@ public class GarageCollection
 
     public override string ToString()
     {
-        StringBuilder sb = new();
-        foreach (var item in _storage)
-        {
-            sb.Append($"{item.ToString()}\n");
-
-        }
-        for (int i = 0; i < _capacity - _storage.Count; i++)
-        {
-            sb.Append("empty parking slot \n");
-        }
-
+        StringBuilder sb = TableFormatter.FormatTable(_storage);
+        sb.Append($"empty parking slots: {_capacity - _storage.Count}");
         return sb.ToString();
     }
 }
