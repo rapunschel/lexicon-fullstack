@@ -146,8 +146,22 @@ public class ConsoleApp
         foreach (string part in parts)
         {
             int colonIndex = part.IndexOf(":");
+
+            if (colonIndex <= 0 || colonIndex == part.Length - 1)
+            {
+                Console.WriteLine(
+                    "Invalid format. Example: reg: abc123, color: red");
+                return;
+            }
             string key = part[..colonIndex].Trim();
             string value = part[(colonIndex + 1)..].Trim();
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                Console.WriteLine(
+                    "Missing value. Example: reg: abc123, color: red");
+                return;
+            }
 
             switch (key.ToLower())
             {
