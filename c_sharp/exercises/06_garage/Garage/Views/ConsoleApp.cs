@@ -238,137 +238,46 @@ public class ConsoleApp
     {
         while (true)
         {
-            string input = Utilities.ReadString(query: "Enter the format: brand, registration, color, wheel count");
-            string[] strings = input.Split(',');
+            try
+            {
+                string input = Utilities.ReadString(query: "Enter the format: brand, registration, color, wheel count");
+                string[] strings = input.Split(',');
 
-            if (int.TryParse(strings[3].Trim(), out int wheelCount))
-            {
-                return new VehicleDetails(Brand: strings[0].Trim(), Registration: strings[1].Trim(), Color: strings[2].Trim(), WheelCount: wheelCount);
+                if (int.TryParse(strings[3].Trim(), out int wheelCount))
+                {
+                    return new VehicleDetails(Brand: strings[0].Trim(), Registration: strings[1].Trim(), Color: strings[2].Trim(), WheelCount: wheelCount);
+                }
+                else
+                {
+                    System.Console.WriteLine("Invalid input. Try again\n");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                System.Console.WriteLine("Invalid input. Try again\n");
+                System.Console.WriteLine("Incorrect format. Example: Ford, abc123, red, 5");
             }
         }
     }
 
     private void CreateVehicleView()
     {
-        void CreateCar(VehicleType type)
+        if (GetVehicleType(Utilities.ReadString(
+                "Do you want to create: airplane, car, bus, motorcycle or boat?"))
+            is not VehicleType type)
         {
-            CarDetails details = (CarDetails)CreateVehicle(common =>
-            {
-                int engineCount = Utilities.ReadPositiveInt(query: "Enter number of engines:");
-                return new CarDetails(common.Registration, common.Brand, common.Color, common.WheelCount, engineCount);
-            });
-            ValidateCreation(_gvm.CreateVehicle(details, type, out string? error), error);
+            Console.WriteLine("Not a valid vehicle type");
+            return;
         }
 
-        void CreateBus(VehicleType type)
+        if (_gvm.CreateVehicle(VehicleDetailsFactory.Create(type, ReadVehicleDetails()), type, out string? error))
         {
-            BusDetails details = (BusDetails)CreateVehicle(common =>
-            {
-                return new BusDetails(common.Registration,
-                                      common.Brand,
-                                      common.Color,
-                                      common.WheelCount,
-                                      Length: Utilities.ReadPositiveDouble(query: "Enter length of bus:"));
-            });
-            ValidateCreation(_gvm.CreateVehicle(details, type, out string? error), error);
+            System.Console.WriteLine("Successfully created vehicle");
         }
-
-        void CreateMotorcycle(VehicleType type)
+        else
         {
-            MotorcycleDetails details = (MotorcycleDetails)CreateVehicle(common =>
-            {
-                return new MotorcycleDetails(common.Registration,
-                                      common.Brand,
-                                      common.Color,
-                                      common.WheelCount,
-                                      Seats: Utilities.ReadPositiveInt(query: "How many seats:"));
-            });
-            ValidateCreation(_gvm.CreateVehicle(details, type, out string? error), error);
+            System.Console.WriteLine($"Error: {error}");
         }
-
-        void CreateBoat(VehicleType type)
-        {
-            BoatDetails details = (BoatDetails)CreateVehicle(common =>
-            {
-                return new BoatDetails(common.Registration,
-                                      common.Brand,
-                                      common.Color,
-                                      common.WheelCount,
-                                      Fuel: Utilities.ReadFuelTypeEnum(query: "Fuel type (Gasoline / Diesel): "));
-            });
-            ValidateCreation(_gvm.CreateVehicle(details, type, out string? error), error);
-        }
-
-        void CreateAirPlane(VehicleType type)
-        {
-            AirplaneDetails details = (AirplaneDetails)CreateVehicle(common =>
-            {
-                return new AirplaneDetails(common.Registration,
-                                      common.Brand,
-                                      common.Color,
-                                      common.WheelCount,
-                                      Speed: Utilities.ReadPositiveInt(query: "Enter speed:"));
-            });
-            ValidateCreation(_gvm.CreateVehicle(details, type, out string? error), error);
-        }
-
-
-        VehicleDetails CreateVehicle(Func<VehicleDetails, VehicleDetails> createDetails)
-        {
-            VehicleDetails details = createDetails(ReadVehicleDetails());
-
-            return details;
-
-        }
-        void ValidateCreation(bool result, string? error)
-        {
-            if (result)
-            {
-                System.Console.WriteLine("Successfully created vehicle");
-            }
-            else
-            {
-                System.Console.WriteLine($"Error: {error}");
-            }
-        }
-
-
-        VehicleType? type = GetVehicleType(
-                            Utilities.ReadString("Do you want to create: airplane, car, bus, motorcycle or boat?")
-                            );
-
-        if (type == null)
-        {
-            System.Console.WriteLine("Not a valid vehicle type");
-        }
-
-        switch (type)
-        {
-            case VehicleType.Car:
-                CreateCar((VehicleType)type);
-                return;
-            case VehicleType.Bus:
-                CreateBus((VehicleType)type);
-                return;
-            case VehicleType.Motorcycle:
-                CreateMotorcycle((VehicleType)type);
-
-                return;
-            case VehicleType.Boat:
-                CreateBoat((VehicleType)type);
-                return;
-            case VehicleType.Airplane:
-                CreateAirPlane((VehicleType)type);
-                return;
-        }
-
     }
-
-
 
     private VehicleType? GetVehicleType(string input)
     {
@@ -383,21 +292,60 @@ public class ConsoleApp
         return null;
     }
 
-
-
     private void ShowParkedVehicles()
     {
         string output = _gvm.GetParkedCarsInfo();
         System.Console.WriteLine(output == "" ? "No garage is initated" : output);
     }
 
-
-
-
     public void WaitForUserKeyPress()
     {
         System.Console.WriteLine("\nPress any key to continue...");
         Console.ReadKey();
         System.Console.WriteLine();
+    }
+
+    private static class VehicleDetailsFactory
+    {
+        public static VehicleDetails Create(VehicleType type, VehicleDetails common) =>
+        type switch
+        {
+            VehicleType.Car => new CarDetails(
+                common.Registration,
+                common.Brand,
+                common.Color,
+                common.WheelCount,
+                Utilities.ReadPositiveInt("Enter number of engines:")),
+
+            VehicleType.Bus => new BusDetails(
+                common.Registration,
+                common.Brand,
+                common.Color,
+                common.WheelCount,
+                Length: Utilities.ReadPositiveDouble("Enter length of bus:")),
+
+            VehicleType.Motorcycle => new MotorcycleDetails(
+                common.Registration,
+                common.Brand,
+                common.Color,
+                common.WheelCount,
+                Seats: Utilities.ReadPositiveInt("How many seats:")),
+
+            VehicleType.Boat => new BoatDetails(
+                common.Registration,
+                common.Brand,
+                common.Color,
+                common.WheelCount,
+                Fuel: Utilities.ReadFuelTypeEnum("Fuel type (Gasoline / Diesel): ")),
+
+            VehicleType.Airplane => new AirplaneDetails(
+                common.Registration,
+                common.Brand,
+                common.Color,
+                common.WheelCount,
+                Speed: Utilities.ReadPositiveInt("Enter speed:")),
+
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
     }
 }
