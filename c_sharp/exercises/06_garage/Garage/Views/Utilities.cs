@@ -6,7 +6,7 @@ using Garage.ViewModels;
 
 namespace Garage.Views;
 
-public class Utilities
+public static class Utilities
 {
     public static int ReadPositiveInt(string query, string errorMessage = "Not a valid number.")
     {
