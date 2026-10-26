@@ -4,12 +4,10 @@ using System.Text;
 using Garage.Models.Records;
 using Garage.Models.Vehicles;
 using Garage.ViewModels;
-
 namespace Garage.Views;
 
 public class ConsoleApp
 {
-
     private enum Command
     {
         Exit = 0,
@@ -123,7 +121,7 @@ public class ConsoleApp
                             isRunning = false;
                             break;
                         case Command.CreateGarage:
-                            int capacity = ReadPositiveInt(query: "How many parking spaces?");
+                            int capacity = Utilities.ReadPositiveInt(query: "How many parking spaces?");
                             _gvm = new GarageViewModel(capacity);
                             System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
                             WaitForUserKeyPress();
@@ -142,7 +140,7 @@ public class ConsoleApp
     {
 
         VehicleDetails details = new();
-        string input = ReadString(query: "Search with following format (at least one): reg: <reg>, color: <color>, brand: <brand>, wheels: <number of wheels>");
+        string input = Utilities.ReadString(query: "Search with following format (at least one): reg: <reg>, color: <color>, brand: <brand>, wheels: <number of wheels>");
         string[] parts = input.Split(',');
 
         foreach (string part in parts)
@@ -206,7 +204,7 @@ public class ConsoleApp
 
     private void ParkVehicleView()
     {
-        if (_gvm.ParkVehicle(ReadString(query: "Park vehicle with registration:")))
+        if (_gvm.ParkVehicle(Utilities.ReadString(query: "Park vehicle with registration:")))
         {
             System.Console.WriteLine("Vehicle was parked.");
         }
@@ -215,7 +213,7 @@ public class ConsoleApp
 
     private void UnparkVehicleView()
     {
-        if (_gvm.RemoveParkedVehicle(ReadString(query: "Remove vehicle from garage with registration:")))
+        if (_gvm.RemoveParkedVehicle(Utilities.ReadString(query: "Remove vehicle from garage with registration:")))
         {
             System.Console.WriteLine("Vehicle was taken out of garage.");
         }
@@ -226,7 +224,7 @@ public class ConsoleApp
     {
         while (true)
         {
-            int capacity = ReadPositiveInt(query: "How many parking spaces?");
+            int capacity = Utilities.ReadPositiveInt(query: "How many parking spaces?");
             if (_gvm.CreateNewGarageCollection(capacity))
             {
                 System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
@@ -240,7 +238,7 @@ public class ConsoleApp
     {
         while (true)
         {
-            string input = ReadString(query: "Enter the format: brand, registration, color, wheel count");
+            string input = Utilities.ReadString(query: "Enter the format: brand, registration, color, wheel count");
             string[] strings = input.Split(',');
 
             if (int.TryParse(strings[3].Trim(), out int wheelCount))
@@ -260,7 +258,7 @@ public class ConsoleApp
         {
             CarDetails details = (CarDetails)CreateVehicle(common =>
             {
-                int engineCount = ReadPositiveInt(query: "Enter number of engines:");
+                int engineCount = Utilities.ReadPositiveInt(query: "Enter number of engines:");
                 return new CarDetails(common.Registration, common.Brand, common.Color, common.WheelCount, engineCount);
             });
             ValidateCreation(_gvm.CreateVehicle(details, type, out string? error), error);
@@ -274,7 +272,7 @@ public class ConsoleApp
                                       common.Brand,
                                       common.Color,
                                       common.WheelCount,
-                                      Length: ReadPositiveDouble(query: "Enter length of bus:"));
+                                      Length: Utilities.ReadPositiveDouble(query: "Enter length of bus:"));
             });
             ValidateCreation(_gvm.CreateVehicle(details, type, out string? error), error);
         }
@@ -287,7 +285,7 @@ public class ConsoleApp
                                       common.Brand,
                                       common.Color,
                                       common.WheelCount,
-                                      Seats: ReadPositiveInt(query: "How many seats:"));
+                                      Seats: Utilities.ReadPositiveInt(query: "How many seats:"));
             });
             ValidateCreation(_gvm.CreateVehicle(details, type, out string? error), error);
         }
@@ -300,7 +298,7 @@ public class ConsoleApp
                                       common.Brand,
                                       common.Color,
                                       common.WheelCount,
-                                      Fuel: ReadFuelTypeEnum(query: "Fuel type (Gasoline / Diesel): "));
+                                      Fuel: Utilities.ReadFuelTypeEnum(query: "Fuel type (Gasoline / Diesel): "));
             });
             ValidateCreation(_gvm.CreateVehicle(details, type, out string? error), error);
         }
@@ -313,7 +311,7 @@ public class ConsoleApp
                                       common.Brand,
                                       common.Color,
                                       common.WheelCount,
-                                      Speed: ReadPositiveInt(query: "Enter speed:"));
+                                      Speed: Utilities.ReadPositiveInt(query: "Enter speed:"));
             });
             ValidateCreation(_gvm.CreateVehicle(details, type, out string? error), error);
         }
@@ -340,7 +338,7 @@ public class ConsoleApp
 
 
         VehicleType? type = GetVehicleType(
-                            ReadString("Do you want to create: airplane, car, bus, motorcycle or boat?")
+                            Utilities.ReadString("Do you want to create: airplane, car, bus, motorcycle or boat?")
                             );
 
         if (type == null)
@@ -394,66 +392,9 @@ public class ConsoleApp
     }
 
 
-    private FuelType ReadFuelTypeEnum(string query = "", string errorMessage = "Not a valid fuel type.")
-    {
-        while (true)
-        {
-            System.Console.WriteLine(query);
-            string? input = Console.ReadLine();
-            foreach (FuelType type in Enum.GetValues(typeof(FuelType)))
-            {
-                if (string.Equals(type.ToString(), input,
-                    StringComparison.OrdinalIgnoreCase))
-                {
-                    return type;
-                }
-                System.Console.WriteLine(errorMessage);
-            }
-        }
-    }
-    private string ReadString(string query = "", string errorMessage = "Empty string.")
-    {
-        while (true)
-        {
-            System.Console.WriteLine(query);
-            string? result = Console.ReadLine();
 
-            if (result == "" || result == null)
-            {
-                System.Console.WriteLine(errorMessage);
-                continue;
-            }
-            return result;
-        }
-    }
 
-    private double ReadPositiveDouble(string query, string errorMessage = "Not a valid number.")
-    {
-        while (true)
-        {
-            System.Console.WriteLine(query);
-            if (double.TryParse(Console.ReadLine(), out double number) && number >= 0)
-            {
-                return number;
-            }
-            else System.Console.WriteLine(errorMessage);
-        }
-    }
-
-    private int ReadPositiveInt(string query, string errorMessage = "Not a valid number.")
-    {
-        while (true)
-        {
-            System.Console.WriteLine(query);
-            if (int.TryParse(Console.ReadLine(), out int number) && number >= 0)
-            {
-                return number;
-            }
-            else System.Console.WriteLine(errorMessage);
-        }
-    }
-
-    private void WaitForUserKeyPress()
+    public void WaitForUserKeyPress()
     {
         System.Console.WriteLine("\nPress any key to continue...");
         Console.ReadKey();
