@@ -58,7 +58,5 @@ public class Program2 : IStart
 
 /*
     Fördel: Vi vet att varje klass som implementerar interfacet har samma metoder.
-    Behöver inte veta enskilda implementationer.
-
     Kan ha flera interfaces.
 */
