@@ -50,14 +50,7 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
         Display.WaitThenClear();
     }
 
-    public void NewGarageView()
 
-    {
-        int capacity = InputReader.ReadPositiveInt(query: "How many parking spaces?");
-        _gvm.CreateNewGarageCollection(capacity: capacity);
-        System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
-        InputReader.WaitForUserKeyPress(_continueMessage);
-    }
 
     public void CreateVehicleView()
     {
