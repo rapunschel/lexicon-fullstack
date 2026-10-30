@@ -1,14 +1,20 @@
 using System;
 using Garage.Models.Interfaces;
+using Garage.Models.Records;
 using Garage.Models.Vehicles;
 using Garage.ViewModels;
+using System.Collections.Generic;
+using System.Text;
+using System.Linq;
 
 namespace Garage.Views.UI;
 
 public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 {
 
-    GarageViewModel<T>? _gvm;
+    private GarageViewModel<T> _gvm;
+    private const string _continueMessage = "Press any key to continue...";
+
     public ConsoleUI(GarageViewModel<T> gvm)
     {
         _gvm = gvm;
@@ -17,41 +23,209 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 
     public void CreateGarageView()
     {
-        throw new NotImplementedException();
+        while (true)
+        {
+            int capacity = InputReader.ReadPositiveInt(query: "How many parking spaces?");
+            if (_gvm.CreateNewGarageCollection(capacity))
+            {
+                System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
+                return;
+            }
+            System.Console.WriteLine("Error creating garage. Try again.");
+        }
+    }
+
+    public void NewGarageView()
+
+    {
+        int capacity = InputReader.ReadPositiveInt(query: "How many parking spaces?");
+        _gvm.CreateNewGarageCollection(capacity: capacity);
+        System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
+        InputReader.WaitForUserKeyPress(_continueMessage);
     }
 
     public void CreateVehicleView()
     {
-        throw new NotImplementedException();
+        if (GetVehicleType(InputReader.ReadString(
+        "Do you want to create: airplane, car, bus, motorcycle or boat?"))
+    is not VehicleType type)
+        {
+            Console.WriteLine("Not a valid vehicle type");
+            return;
+        }
+
+        if (_gvm.CreateVehicle(VehicleDetailsFactory.Create(type, ReadVehicleDetails()), out string? error))
+        {
+            System.Console.WriteLine("Successfully created vehicle");
+        }
+        else
+        {
+            System.Console.WriteLine($"Error: {error}");
+        }
+        InputReader.WaitForUserKeyPress(_continueMessage);
+
+
+        static VehicleType? GetVehicleType(string input)
+        {
+            foreach (VehicleType type in Enum.GetValues(typeof(VehicleType)))
+            {
+                if (string.Equals(type.ToString(), input,
+                                StringComparison.OrdinalIgnoreCase))
+                {
+                    return type;
+                }
+            }
+            return null;
+        }
+        static VehicleDetails ReadVehicleDetails()
+        {
+            while (true)
+            {
+                try
+                {
+                    string input = InputReader.ReadString(query: "Enter the format: brand, registration, color, wheel count");
+                    string[] strings = input.Split(',');
+
+                    if (int.TryParse(strings[3].Trim(), out int wheelCount))
+                    {
+                        return new VehicleDetails(Brand: strings[0].Trim(), Registration: strings[1].Trim(), Color: strings[2].Trim(), WheelCount: wheelCount);
+                    }
+                    else
+                    {
+                        System.Console.WriteLine("Invalid input. Try again\n");
+                    }
+                }
+                catch (Exception)
+                {
+                    System.Console.WriteLine("Incorrect format. Example: Ford, abc123, red, 5");
+                }
+            }
+        }
     }
 
     public void InitTestData()
     {
-        throw new NotImplementedException();
+        _gvm.InitTestData();
+        System.Console.WriteLine("Test data added");
+        InputReader.WaitForUserKeyPress(_continueMessage);
     }
 
     public void ParkedVehiclesView()
     {
-        throw new NotImplementedException();
+        string output = _gvm.GetParkedCarsInfo();
+        System.Console.WriteLine(output == "" ? "No garage is initated" : output);
+        InputReader.WaitForUserKeyPress(_continueMessage);
+
     }
 
     public void ParkVehicleView()
     {
-        throw new NotImplementedException();
+        if (_gvm.ParkVehicle(InputReader.ReadString(query: "Park vehicle with registration:")))
+        {
+            System.Console.WriteLine("Vehicle was parked.");
+        }
+        else System.Console.WriteLine("Failed to park. Garage full or vehicle doesnt exist or already parked");
+        InputReader.WaitForUserKeyPress(_continueMessage);
+
     }
 
     public void SearchView()
     {
-        throw new NotImplementedException();
+
+        VehicleDetails details = new();
+        string input = InputReader.ReadString(query: "Search with following format (at least one): reg: <reg>, color: <color>, brand: <brand>, wheels: <number of wheels>");
+        string[] parts = input.Split(',');
+
+        foreach (string part in parts)
+        {
+            int colonIndex = part.IndexOf(":");
+
+            if (colonIndex <= 0 || colonIndex == part.Length - 1)
+            {
+                Console.WriteLine(
+                    "Invalid format. Example: reg: abc123, color: red");
+                return;
+            }
+            string key = part[..colonIndex].Trim();
+            string value = part[(colonIndex + 1)..].Trim();
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                Console.WriteLine(
+                    "Missing value. Example: reg: abc123, color: red");
+                return;
+            }
+
+            switch (key.ToLower())
+            {
+                case "reg":
+                    details.Registration = value;
+                    break;
+                case "color":
+                    details.Color = value;
+                    break;
+                case "brand":
+                    details.Brand = value;
+                    break;
+                case "wheels":
+                    if (int.TryParse(value, out int result) && result >= 0)
+                    {
+                        details.WheelCount = result;
+                    }
+                    else
+                    {
+                        System.Console.WriteLine("Invalid wheels parameter or non-positive value");
+                        return;
+                    }
+                    break;
+                default:
+                    System.Console.WriteLine("Failed to parse search query.");
+                    return;
+            }
+        }
+
+        if (!_gvm.Search(details, out IEnumerable<T> items))
+        {
+            System.Console.WriteLine("Search failed.");
+            return;
+
+        }
+
+        if (!items.Any())
+        {
+            System.Console.WriteLine("No matches");
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.Append("Search results:\n");
+        System.Console.WriteLine("========================================");
+        foreach (var item in items)
+        {
+            sb.Append($"{item}\n");
+        }
+
+        System.Console.WriteLine(sb.ToString());
+        InputReader.WaitForUserKeyPress(_continueMessage);
+
     }
 
     public void UnparkedVehiclesView()
     {
-        throw new NotImplementedException();
+        System.Console.WriteLine(_gvm.GetNotParkedVehicles());
+        InputReader.WaitForUserKeyPress(_continueMessage);
     }
 
     public void UnparkVehicleView()
     {
-        throw new NotImplementedException();
+        if (_gvm.RemoveParkedVehicle(InputReader.ReadString(query: "Remove vehicle from garage with registration:")))
+        {
+            System.Console.WriteLine("Vehicle was taken out of garage.");
+        }
+        else System.Console.WriteLine("Vehicle not found");
+        InputReader.WaitForUserKeyPress(_continueMessage);
+
     }
+
+
 }

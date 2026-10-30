@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Garage.Models.Records;
 using Garage.Models.Vehicles;
 using Garage.ViewModels;
-using System.Linq;
 using Garage.Models.Factories;
+using Garage.Models.Interfaces;
+using Garage.Views.UI;
 
 namespace Garage.Views;
 
@@ -18,7 +16,7 @@ public class ConsoleApp
         CreateVehicle = 2,
         ParkVehicle = 3,
         Search = 4,
-        RemoveFromGarage = 5,
+        UnparkVehicle = 5,
         ShowParked = 6,
         ShowNotParked = 7,
         InitTestData = 8
@@ -40,280 +38,73 @@ public class ConsoleApp
                          "8: Creates vehicles and populates garage with a few vehicles if it has available spaces";
 
 
+
+
         const string invalidCmdMessage = "Invalid command";
         System.Console.WriteLine(headMenuMessage);
+
+        int capacity = InputReader.ReadPositiveInt(query: "How many parking spaces?");
+        _gvm = new GarageViewModel<IVehicle>(factory: new VehicleFactory(), capacity: capacity);
+        System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
+        InputReader.WaitForUserKeyPress(_continueMessage);
+        IUI<IVehicle> ui = new ConsoleUI<IVehicle>(gvm: _gvm);
+
         bool isRunning = true;
         while (isRunning)
         {
 
-            if (_gvm != null)
+
+            System.Console.WriteLine("========================================");
+            System.Console.WriteLine(menuCmdsMessage);
+            System.Console.WriteLine("========================================");
+
+            if (!int.TryParse(Console.ReadLine(), out int command)) System.Console.WriteLine(invalidCmdMessage);
+
+
+            switch ((Command)command)
             {
-                System.Console.WriteLine("========================================");
-                System.Console.WriteLine(menuCmdsMessage);
-                System.Console.WriteLine("========================================");
-
-                if (int.TryParse(Console.ReadLine(), out int command))
-                {
-
-                    switch ((Command)command)
-                    {
-                        case Command.Exit:
-                            isRunning = false;
-                            break;
-                        case Command.CreateGarage:
-                            CreateGarageCollection();
-                            InputReader.WaitForUserKeyPress(_continueMessage);
-                            break;
-                        case Command.CreateVehicle:
-                            CreateVehicleView();
-                            InputReader.WaitForUserKeyPress(_continueMessage);
-                            break;
-                        case Command.ParkVehicle:
-                            ParkVehicleView();
-                            InputReader.WaitForUserKeyPress(_continueMessage);
-                            break;
-                        case Command.RemoveFromGarage:
-                            UnparkVehicleView();
-                            InputReader.WaitForUserKeyPress(_continueMessage);
-                            break;
-                        case Command.Search:
-                            SearchView();
-                            InputReader.WaitForUserKeyPress(_continueMessage);
-                            break;
-                        case Command.ShowParked:
-                            ShowParkedVehicles();
-                            InputReader.WaitForUserKeyPress(_continueMessage);
-                            break;
-                        case Command.ShowNotParked:
-                            System.Console.WriteLine(_gvm.GetNotParkedVehicles());
-                            InputReader.WaitForUserKeyPress(_continueMessage);
-                            break;
-                        case Command.InitTestData:
-                            try
-                            {
-                                _gvm.InitTestData();
-                                System.Console.WriteLine("Test data added");
-                                InputReader.WaitForUserKeyPress(_continueMessage);
-
-                            }
-                            catch (Exception ex)
-                            {
-                                System.Console.WriteLine(ex.Message);
-                                InputReader.WaitForUserKeyPress(_continueMessage);
-                            }
-                            break;
-                        default:
-                            System.Console.WriteLine(invalidCmdMessage);
-                            break;
-                    }
-
-                }
-                else System.Console.WriteLine(invalidCmdMessage);
-            }
-            else
-            {
-                System.Console.WriteLine("\n0: To exit program.\n" +
-                         "1: Create Garage.\n");
-
-                if (int.TryParse(Console.ReadLine(), out int command))
-                {
-
-                    switch ((Command)command)
-                    {
-                        case Command.Exit:
-                            isRunning = false;
-                            break;
-                        case Command.CreateGarage:
-                            int capacity = InputReader.ReadPositiveInt(query: "How many parking spaces?");
-                            _gvm = new GarageViewModel<IVehicle>(factory: new VehicleFactory(), capacity: capacity);
-                            System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
-                            InputReader.WaitForUserKeyPress(_continueMessage);
-                            break;
-                    }
-                }
-                else System.Console.WriteLine(invalidCmdMessage);
-
-            }
-        }
-    }
-
-
-
-    private void SearchView()
-    {
-
-        VehicleDetails details = new();
-        string input = InputReader.ReadString(query: "Search with following format (at least one): reg: <reg>, color: <color>, brand: <brand>, wheels: <number of wheels>");
-        string[] parts = input.Split(',');
-
-        foreach (string part in parts)
-        {
-            int colonIndex = part.IndexOf(":");
-
-            if (colonIndex <= 0 || colonIndex == part.Length - 1)
-            {
-                Console.WriteLine(
-                    "Invalid format. Example: reg: abc123, color: red");
-                return;
-            }
-            string key = part[..colonIndex].Trim();
-            string value = part[(colonIndex + 1)..].Trim();
-
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                Console.WriteLine(
-                    "Missing value. Example: reg: abc123, color: red");
-                return;
-            }
-
-            switch (key.ToLower())
-            {
-                case "reg":
-                    details.Registration = value;
+                case Command.Exit:
+                    isRunning = false;
                     break;
-                case "color":
-                    details.Color = value;
+                case Command.CreateGarage:
+                    ui.CreateGarageView();
                     break;
-                case "brand":
-                    details.Brand = value;
+                case Command.CreateVehicle:
+                    ui.CreateVehicleView();
                     break;
-                case "wheels":
-                    if (int.TryParse(value, out int result) && result >= 0)
+                case Command.ParkVehicle:
+                    ui.ParkVehicleView();
+                    break;
+                case Command.UnparkVehicle:
+                    ui.UnparkVehicleView();
+                    break;
+                case Command.Search:
+                    ui.SearchView();
+                    break;
+                case Command.ShowParked:
+                    ui.ParkedVehiclesView();
+                    break;
+                case Command.ShowNotParked:
+                    ui.UnparkedVehiclesView();
+
+                    break;
+                case Command.InitTestData:
+                    try
                     {
-                        details.WheelCount = result;
+                        ui.InitTestData();
+
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        System.Console.WriteLine("Invalid wheels parameter or non-positive value");
-                        return;
+                        System.Console.WriteLine(ex.Message);
+                        InputReader.WaitForUserKeyPress(_continueMessage);
                     }
                     break;
                 default:
-                    System.Console.WriteLine("Failed to parse search query.");
-                    return;
+                    System.Console.WriteLine(invalidCmdMessage);
+                    break;
             }
         }
 
-        if (!_gvm.Search(details, out IEnumerable<IVehicle> items))
-        {
-            System.Console.WriteLine("Search failed.");
-            return;
-
-        }
-
-        if (!items.Any())
-        {
-            System.Console.WriteLine("No matches");
-            return;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        sb.Append("Search results:\n");
-        System.Console.WriteLine("========================================");
-        foreach (var item in items)
-        {
-            sb.Append($"{item}\n");
-        }
-
-        System.Console.WriteLine(sb.ToString());
-
     }
-
-    private void ParkVehicleView()
-    {
-        if (_gvm.ParkVehicle(InputReader.ReadString(query: "Park vehicle with registration:")))
-        {
-            System.Console.WriteLine("Vehicle was parked.");
-        }
-        else System.Console.WriteLine("Failed to park. Garage full or vehicle doesnt exist or already parked");
-    }
-
-    private void UnparkVehicleView()
-    {
-        if (_gvm.RemoveParkedVehicle(InputReader.ReadString(query: "Remove vehicle from garage with registration:")))
-        {
-            System.Console.WriteLine("Vehicle was taken out of garage.");
-        }
-        else System.Console.WriteLine("Vehicle not found");
-
-    }
-    private void CreateGarageCollection()
-    {
-        while (true)
-        {
-            int capacity = InputReader.ReadPositiveInt(query: "How many parking spaces?");
-            if (_gvm.CreateNewGarageCollection(capacity))
-            {
-                System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
-                return;
-            }
-            System.Console.WriteLine("Error creating garage. Try again.");
-        }
-    }
-
-    private VehicleDetails ReadVehicleDetails()
-    {
-        while (true)
-        {
-            try
-            {
-                string input = InputReader.ReadString(query: "Enter the format: brand, registration, color, wheel count");
-                string[] strings = input.Split(',');
-
-                if (int.TryParse(strings[3].Trim(), out int wheelCount))
-                {
-                    return new VehicleDetails(Brand: strings[0].Trim(), Registration: strings[1].Trim(), Color: strings[2].Trim(), WheelCount: wheelCount);
-                }
-                else
-                {
-                    System.Console.WriteLine("Invalid input. Try again\n");
-                }
-            }
-            catch (Exception)
-            {
-                System.Console.WriteLine("Incorrect format. Example: Ford, abc123, red, 5");
-            }
-        }
-    }
-
-    private void CreateVehicleView()
-    {
-        if (GetVehicleType(InputReader.ReadString(
-                "Do you want to create: airplane, car, bus, motorcycle or boat?"))
-            is not VehicleType type)
-        {
-            Console.WriteLine("Not a valid vehicle type");
-            return;
-        }
-
-        if (_gvm.CreateVehicle(VehicleDetailsFactory.Create(type, ReadVehicleDetails()), out string? error))
-        {
-            System.Console.WriteLine("Successfully created vehicle");
-        }
-        else
-        {
-            System.Console.WriteLine($"Error: {error}");
-        }
-    }
-
-    private VehicleType? GetVehicleType(string input)
-    {
-        foreach (VehicleType type in Enum.GetValues(typeof(VehicleType)))
-        {
-            if (string.Equals(type.ToString(), input,
-                            StringComparison.OrdinalIgnoreCase))
-            {
-                return type;
-            }
-        }
-        return null;
-    }
-
-    private void ShowParkedVehicles()
-    {
-        string output = _gvm.GetParkedCarsInfo();
-        System.Console.WriteLine(output == "" ? "No garage is initated" : output);
-    }
-
-
 }
