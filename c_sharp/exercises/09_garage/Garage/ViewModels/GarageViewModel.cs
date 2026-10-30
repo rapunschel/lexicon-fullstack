@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Garage.Models;
 using Garage.Models.Data;
+using Garage.Models.Interfaces;
 using Garage.Models.Records;
 using Garage.Models.Vehicles;
 using Garage.Utils;
@@ -17,10 +18,11 @@ public class GarageViewModel<T> where T : class, IVehicle
     private List<T> _createdVehicles = [];
     private bool _testDataLoaded = false;
     private IEnumerable<T> _testData = TestData<T>.GetTestData();
-
-    public GarageViewModel(int capacity)
+    private IVehicleFactory<T> _factory;
+    public GarageViewModel(IVehicleFactory<T> factory, int capacity)
     {
         _collection = new GarageCollection<T>(capacity);
+        _factory = factory;
     }
 
 
@@ -59,40 +61,12 @@ public class GarageViewModel<T> where T : class, IVehicle
     }
 
 
-    public bool CreateVehicle(VehicleDetails details, VehicleType type, out string? error)
+    public bool CreateVehicle(VehicleDetails details, out string? error)
     {
         error = "";
-        IVehicle vehicle;
         try
         {
-            switch (type)
-            {
-                case VehicleType.Car:
-                    vehicle = new Car(brand: details.Brand, regNumber: details.Registration,
-                        color: details.Color, wheelCount: details.WheelCount, engineCount: ((CarDetails)details).EngineCount);
-                    break;
-                case VehicleType.Bus:
-                    vehicle = new Bus(brand: details.Brand, regNumber: details.Registration,
-                        color: details.Color, wheelCount: details.WheelCount, length: ((BusDetails)details).Length);
-                    break;
-                case VehicleType.Motorcycle:
-                    vehicle = new Motorcycle(brand: details.Brand, regNumber: details.Registration,
-                                     color: details.Color, wheelCount: details.WheelCount, ((MotorcycleDetails)details).Seats);
-                    break;
-                case VehicleType.Boat:
-                    vehicle = new Boat(brand: details.Brand, regNumber: details.Registration,
-                 color: details.Color, wheelCount: details.WheelCount, ((BoatDetails)details).Fuel);
-
-                    break;
-                case VehicleType.Airplane:
-                    vehicle = new Airplane(brand: details.Brand, regNumber: details.Registration,
-                 color: details.Color, wheelCount: details.WheelCount, ((AirplaneDetails)details).Speed);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, "Unsupported vehicle type.");
-            }
-
-            _createdVehicles.Add((T)vehicle);
+            _createdVehicles.Add(_factory.Create(details));
             return true;
         }
         catch (Exception ex)
@@ -100,8 +74,9 @@ public class GarageViewModel<T> where T : class, IVehicle
             error = ex.Message;
             return false;
         }
-
     }
+
+
 
     public string GetParkedCarsInfo()
     {

@@ -5,6 +5,7 @@ using Garage.Models.Records;
 using Garage.Models.Vehicles;
 using Garage.ViewModels;
 using System.Linq;
+using Garage.Models.Factories;
 
 namespace Garage.Views;
 
@@ -124,7 +125,7 @@ public partial class ConsoleApp
                             break;
                         case Command.CreateGarage:
                             int capacity = Utilities.ReadPositiveInt(query: "How many parking spaces?");
-                            _gvm = new GarageViewModel<IVehicle>(capacity);
+                            _gvm = new GarageViewModel<IVehicle>(factory: new VehicleFactory(), capacity: capacity);
                             System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
                             WaitForUserKeyPress();
                             break;
@@ -285,7 +286,7 @@ public partial class ConsoleApp
             return;
         }
 
-        if (_gvm.CreateVehicle(VehicleDetailsFactory.Create(type, ReadVehicleDetails()), type, out string? error))
+        if (_gvm.CreateVehicle(VehicleDetailsFactory.Create(type, ReadVehicleDetails()), out string? error))
         {
             System.Console.WriteLine("Successfully created vehicle");
         }
