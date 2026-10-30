@@ -25,7 +25,7 @@ public class ConsoleApp
     }
 
     private GarageViewModel<IVehicle> _gvm = default!;
-
+    private const string _continueMessage = "Press any key to continue...";
     public void Run()
     {
         const string headMenuMessage = "Welcome to the Garage";
@@ -62,44 +62,44 @@ public class ConsoleApp
                             break;
                         case Command.CreateGarage:
                             CreateGarageCollection();
-                            WaitForUserKeyPress();
+                            InputReader.WaitForUserKeyPress(_continueMessage);
                             break;
                         case Command.CreateVehicle:
                             CreateVehicleView();
-                            WaitForUserKeyPress();
+                            InputReader.WaitForUserKeyPress(_continueMessage);
                             break;
                         case Command.ParkVehicle:
                             ParkVehicleView();
-                            WaitForUserKeyPress();
+                            InputReader.WaitForUserKeyPress(_continueMessage);
                             break;
                         case Command.RemoveFromGarage:
                             UnparkVehicleView();
-                            WaitForUserKeyPress();
+                            InputReader.WaitForUserKeyPress(_continueMessage);
                             break;
                         case Command.Search:
                             SearchView();
-                            WaitForUserKeyPress();
+                            InputReader.WaitForUserKeyPress(_continueMessage);
                             break;
                         case Command.ShowParked:
                             ShowParkedVehicles();
-                            WaitForUserKeyPress();
+                            InputReader.WaitForUserKeyPress(_continueMessage);
                             break;
                         case Command.ShowNotParked:
                             System.Console.WriteLine(_gvm.GetNotParkedVehicles());
-                            WaitForUserKeyPress();
+                            InputReader.WaitForUserKeyPress(_continueMessage);
                             break;
                         case Command.InitTestData:
                             try
                             {
                                 _gvm.InitTestData();
                                 System.Console.WriteLine("Test data added");
-                                WaitForUserKeyPress();
+                                InputReader.WaitForUserKeyPress(_continueMessage);
 
                             }
                             catch (Exception ex)
                             {
                                 System.Console.WriteLine(ex.Message);
-                                WaitForUserKeyPress();
+                                InputReader.WaitForUserKeyPress(_continueMessage);
                             }
                             break;
                         default:
@@ -127,7 +127,7 @@ public class ConsoleApp
                             int capacity = InputReader.ReadPositiveInt(query: "How many parking spaces?");
                             _gvm = new GarageViewModel<IVehicle>(factory: new VehicleFactory(), capacity: capacity);
                             System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
-                            WaitForUserKeyPress();
+                            InputReader.WaitForUserKeyPress(_continueMessage);
                             break;
                     }
                 }
@@ -315,10 +315,5 @@ public class ConsoleApp
         System.Console.WriteLine(output == "" ? "No garage is initated" : output);
     }
 
-    public void WaitForUserKeyPress()
-    {
-        System.Console.WriteLine("\nPress any key to continue...");
-        Console.ReadKey();
-        System.Console.WriteLine();
-    }
+
 }

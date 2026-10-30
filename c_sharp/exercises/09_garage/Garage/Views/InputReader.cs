@@ -31,6 +31,13 @@ public static class InputReader
         }
     }
 
+    public static void WaitForUserKeyPress(string message)
+    {
+        System.Console.WriteLine($"\n{message}.");
+        Console.ReadKey();
+        System.Console.WriteLine();
+    }
+
     public static string ReadString(string query = "", string errorMessage = "Empty string.")
     {
         while (true)
