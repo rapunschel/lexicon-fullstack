@@ -6,6 +6,7 @@ using Garage.ViewModels;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Garage.Views.Utilities;
 
 namespace Garage.Views.UI;
 
@@ -20,19 +21,33 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
         _gvm = gvm;
     }
 
-
-    public void CreateGarageView()
+    private delegate bool TryReadValue<TValue>(out TValue value);
+    private static TValue PromptUntilValid<TValue>(TryReadValue<TValue> tryRead, Action showQuery, Action showError)
     {
         while (true)
         {
-            int capacity = InputReader.ReadPositiveInt(query: "How many parking spaces?");
-            if (_gvm.CreateNewGarageCollection(capacity))
-            {
-                System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
-                return;
-            }
-            System.Console.WriteLine("Error creating garage. Try again.");
+            showQuery.Invoke();
+            if (tryRead(out TValue value)) return value;
+
+            showError();
         }
+    }
+
+    public void CreateGarageView()
+    {
+        Display.Clear();
+        Display.CreateGarageInit(typeof(T).Name);
+
+        int capacity = PromptUntilValid<int>(
+            tryRead: InputReader.ReadPositiveInt,
+            showQuery: () => Display.ShowQuery("How many parking slots?"),
+            showError: () => Display.ErrorMessage(error: "Not a positive integer"));
+
+        if (_gvm.CreateNewGarageCollection(capacity))
+            Display.SuccessMessage($"Created garage with {capacity} parking slots.");
+        else Display.ErrorMessage("Unexpected error: creating garage.");
+
+        Display.WaitThenClear();
     }
 
     public void NewGarageView()

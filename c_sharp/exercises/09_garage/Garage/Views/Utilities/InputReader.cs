@@ -73,5 +73,46 @@ public static class InputReader
         }
     }
 
+    public static bool ReadPositiveInt(out int value)
+    {
+        return int.TryParse(Console.ReadLine(), out value) && value >= 0;
+
+    }
+
+    public static bool ReadPositiveDouble(out int value)
+    {
+        return int.TryParse(Console.ReadLine(), out value) && value >= 0;
+
+    }
+
+    public static void WaitForUserKeyPress()
+    {
+        Console.ReadKey();
+    }
+
+    public static bool ReadString(out string? text)
+    {
+        text = Console.ReadLine();
+        return text == "" || text == null;
+
+    }
+
+    public static bool ReadFuelTypeEnum(out FuelType? fuel)
+    {
+
+        string? input = Console.ReadLine();
+        foreach (FuelType type in Enum.GetValues(typeof(FuelType)))
+        {
+            if (string.Equals(type.ToString(), input,
+                StringComparison.OrdinalIgnoreCase))
+            {
+                fuel = type;
+                return true;
+            }
+        }
+        fuel = null;
+        return false;
+
+    }
 
 }
