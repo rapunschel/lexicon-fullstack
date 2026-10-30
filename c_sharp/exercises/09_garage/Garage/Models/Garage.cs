@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -7,7 +8,7 @@ using Garage.Utils;
 
 namespace Garage.Models;
 
-public class GarageCollection<T> : IGarageCollection<T> where T : IVehicle
+public class GarageCollection<T> : IEnumerable<T>, IGarageCollection<T> where T : IVehicle
 {
     private readonly List<T> _storage = new List<T>();
     private int _capacity = 0;
@@ -71,6 +72,16 @@ public class GarageCollection<T> : IGarageCollection<T> where T : IVehicle
         sb.Append(emptySlotsMsg);
 
         return sb.ToString();
+    }
+
+    public IEnumerator<T> GetEnumerator()
+    {
+        return _storage.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }
 

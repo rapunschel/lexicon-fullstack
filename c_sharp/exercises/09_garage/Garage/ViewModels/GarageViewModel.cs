@@ -10,7 +10,7 @@ using Garage.Utils;
 
 namespace Garage.ViewModels;
 
-public class GarageViewModel<T> where T : IVehicle
+public class GarageViewModel<T> where T : class, IVehicle
 {
 
     private IGarageCollection<T> _collection;
@@ -89,10 +89,7 @@ public class GarageViewModel<T> where T : IVehicle
                  color: details.Color, wheelCount: details.WheelCount, ((AirplaneDetails)details).Speed);
                     break;
                 default:
-                    vehicle = new IVehicle(brand: details.Brand, regNumber: details.Registration,
-                        color: details.Color, wheelCount: details.WheelCount);
-                    break;
-
+                    throw new ArgumentOutOfRangeException(nameof(type), type, "Unsupported vehicle type.");
             }
 
             _createdVehicles.Add((T)vehicle);
@@ -112,7 +109,7 @@ public class GarageViewModel<T> where T : IVehicle
     }
     public string GetNotParkedVehicles()
     {
-        StringBuilder sb = TableFormatter.FormatTable(_createdVehicles);
+        StringBuilder sb = TableFormatter<T>.FormatTable(_createdVehicles);
         return sb.ToString();
     }
 
