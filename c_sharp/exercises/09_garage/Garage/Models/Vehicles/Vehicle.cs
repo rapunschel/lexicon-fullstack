@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 namespace Garage.Models.Vehicles;
 
-public class Vehicle
+public class Vehicle : IVehicle
 {
-    private static HashSet<string> set = new HashSet<string>();
+    private static HashSet<string> _set = [];
 
 
     public string RegNumber
@@ -19,11 +19,11 @@ public class Vehicle
                 throw new ArgumentException(
                     "Registration number must be 3 letters followed by 3 digits. Example: abc123");
 
-            if (set.Contains(normalized))
+            if (_set.Contains(normalized))
                 throw new ArgumentException("Reg number is not unique");
 
             field = normalized;
-            set.Add(normalized);
+            _set.Add(normalized);
         }
     }
     public string Color
