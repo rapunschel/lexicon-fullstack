@@ -23,7 +23,7 @@ public record VehicleDetails
     {
 
     }
-    public virtual bool Matches(Vehicle item)
+    public virtual bool Matches(IVehicle item)
     {
         return (string.IsNullOrEmpty(Brand) || string.Equals(Brand, item.Brand, StringComparison.OrdinalIgnoreCase)) &&
                (string.IsNullOrEmpty(Color) || string.Equals(Color, item.Color, StringComparison.OrdinalIgnoreCase)) &&

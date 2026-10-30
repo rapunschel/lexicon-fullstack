@@ -6,12 +6,12 @@ using Garage.Models.Vehicles;
 
 namespace Garage.Models.Data;
 
-public static class TestData<T> where T : Vehicle
+public static class TestData<T> where T : IVehicle
 {
 
     public static IEnumerable<T> GetTestData()
     {
-        Vehicle[] testData =
+        IVehicle[] testData =
         {
             new Airplane("Boeing", "AIR101", "White", 6, 850),
             new Airplane("Airbus", "AIR102", "Blue", 6, 900),

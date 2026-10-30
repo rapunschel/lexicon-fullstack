@@ -10,7 +10,7 @@ using Garage.Utils;
 
 namespace Garage.ViewModels;
 
-public class GarageViewModel<T> where T : Vehicle
+public class GarageViewModel<T> where T : IVehicle
 {
 
     private IGarageCollection<T> _collection;
@@ -62,7 +62,7 @@ public class GarageViewModel<T> where T : Vehicle
     public bool CreateVehicle(VehicleDetails details, VehicleType type, out string? error)
     {
         error = "";
-        Vehicle vehicle;
+        IVehicle vehicle;
         try
         {
             switch (type)
@@ -89,7 +89,7 @@ public class GarageViewModel<T> where T : Vehicle
                  color: details.Color, wheelCount: details.WheelCount, ((AirplaneDetails)details).Speed);
                     break;
                 default:
-                    vehicle = new Vehicle(brand: details.Brand, regNumber: details.Registration,
+                    vehicle = new IVehicle(brand: details.Brand, regNumber: details.Registration,
                         color: details.Color, wheelCount: details.WheelCount);
                     break;
 

@@ -23,7 +23,7 @@ public partial class ConsoleApp
         InitTestData = 8
     }
 
-    private GarageViewModel<Vehicle> _gvm = default!;
+    private GarageViewModel<IVehicle> _gvm = default!;
 
     public void Run()
     {
@@ -124,7 +124,7 @@ public partial class ConsoleApp
                             break;
                         case Command.CreateGarage:
                             int capacity = Utilities.ReadPositiveInt(query: "How many parking spaces?");
-                            _gvm = new GarageViewModel<Vehicle>(capacity);
+                            _gvm = new GarageViewModel<IVehicle>(capacity);
                             System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
                             WaitForUserKeyPress();
                             break;
@@ -193,7 +193,7 @@ public partial class ConsoleApp
             }
         }
 
-        if (!_gvm.Search(details, out IEnumerable<Vehicle> items))
+        if (!_gvm.Search(details, out IEnumerable<IVehicle> items))
         {
             System.Console.WriteLine("Search failed.");
             return;

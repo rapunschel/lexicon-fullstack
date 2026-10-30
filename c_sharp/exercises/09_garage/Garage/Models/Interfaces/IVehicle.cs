@@ -7,6 +7,6 @@ public interface IVehicle
     string Brand { get; set; }
     int WheelCount { get; set; }
 
-    Vehicle ShallowCopy();
+    IVehicle ShallowCopy();
     string ToString();
 }

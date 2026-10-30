@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace Garage.Utils;
 
-public static class TableFormatter
+public static class TableFormatter<T> where T : IVehicle
 {
-    public static StringBuilder FormatTable(IEnumerable<Vehicle> vehicles)
+    public static StringBuilder FormatTable(IEnumerable<T> vehicles)
     {
         StringBuilder sb = new();
         const int offset = -20;
@@ -23,7 +23,7 @@ public static class TableFormatter
                 Bus _ => nameof(Bus),
                 Car _ => nameof(Car),
                 Motorcycle _ => nameof(Motorcycle),
-                Vehicle _ => nameof(Vehicle),
+                IVehicle _ => nameof(IVehicle),
                 _ => "Unknown"
             };
             string details = item switch
@@ -33,7 +33,7 @@ public static class TableFormatter
                 Bus bus => $"Length: {bus.Length}",
                 Car car => $"EngineCount: {car.EngineCount}",
                 Motorcycle motorcycle => $"Seats: {motorcycle.Seats}",
-                Vehicle _ => "",
+                IVehicle _ => "",
                 _ => ""
             };
             sb.Append($"{typeName,offset} {item.Brand,offset} {item.RegNumber,offset} {item.Color,offset} {item.WheelCount,offset} {details,offset}\n");

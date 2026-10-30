@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 namespace Garage.Models.Vehicles;
 
-public class Vehicle : IVehicle
+public abstract class Vehicle : IVehicle
 {
     private static HashSet<string> _set = [];
 
@@ -68,8 +68,8 @@ public class Vehicle : IVehicle
         return $"Brand: {Brand} | Reg number: {RegNumber} | Color: {Color} | Wheels: {WheelCount}";
     }
 
-    public virtual Vehicle ShallowCopy()
+    public virtual IVehicle ShallowCopy()
     {
-        return (Vehicle)MemberwiseClone();
+        return (IVehicle)MemberwiseClone();
     }
 }
