@@ -193,31 +193,6 @@ public partial class ConsoleApp
             }
         }
 
-        // if (_gvm.Search(details, out IEnumerable<Vehicle> items))
-        // {
-        //     if (!items.Any())
-        //     {
-        //         System.Console.WriteLine("No matches");
-        //     }
-        //     else
-        //     {
-        //         StringBuilder sb = new StringBuilder();
-        //         sb.Append("Search results:\n");
-        //         System.Console.WriteLine("========================================");
-        //         foreach (var item in items)
-        //         {
-        //             sb.Append($"{item}\n");
-        //         }
-
-        //         System.Console.WriteLine(sb.ToString());
-        //     }
-        // }
-        // else
-        // {
-        //     System.Console.WriteLine("Search failed.");
-        // }
-
-
         if (!_gvm.Search(details, out IEnumerable<Vehicle> items))
         {
             System.Console.WriteLine("Search failed.");
