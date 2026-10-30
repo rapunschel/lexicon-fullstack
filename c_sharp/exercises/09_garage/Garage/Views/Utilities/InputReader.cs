@@ -60,7 +60,7 @@ public static class InputReader
         while (true)
         {
             System.Console.WriteLine(query);
-            string? input = Console.ReadLine();
+            string input = Console.ReadLine() ?? "";
             foreach (FuelType type in Enum.GetValues(typeof(FuelType)))
             {
                 if (string.Equals(type.ToString(), input,
@@ -68,8 +68,8 @@ public static class InputReader
                 {
                     return type;
                 }
-                System.Console.WriteLine(errorMessage);
             }
+            System.Console.WriteLine(errorMessage);
         }
     }
 
@@ -90,11 +90,10 @@ public static class InputReader
         Console.ReadKey();
     }
 
-    public static bool ReadString(out string? text)
+    public static bool ReadString(out string text)
     {
-        text = Console.ReadLine();
-        return text == "" || text == null;
-
+        text = Console.ReadLine() ?? "";
+        return text != "";
     }
 
     public static bool ReadFuelTypeEnum(out FuelType? fuel)

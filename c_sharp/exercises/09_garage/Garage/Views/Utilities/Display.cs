@@ -3,7 +3,7 @@ namespace Garage.Views.Utilities;
 
 public static class Display
 {
-    public static void WaitForKeyPress()
+    private static void WaitForKeyPress()
     {
         System.Console.WriteLine("Press any key to continue...");
     }

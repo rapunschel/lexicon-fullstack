@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Garage.Views.Utilities;
+using Garage.Models.Utilities;
 
 namespace Garage.Views.UI;
 
@@ -14,6 +15,7 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 {
 
     private GarageViewModel<T> _gvm;
+    private VehicleDetailsViewModel _detailsVM = new();
     private const string _continueMessage = "Press any key to continue...";
 
     public ConsoleUI(GarageViewModel<T> gvm)
@@ -54,59 +56,61 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 
     public void CreateVehicleView()
     {
-        if (GetVehicleType(InputReader.ReadString(
-        "Do you want to create: airplane, car, bus, motorcycle or boat?"))
-    is not VehicleType type)
+        HashSet<string> typeSet = [.. AssemblyScanner.FindConcreteSubtypesOfT(typeof(T)).Select(type => type.Name)];
+        string input = PromptUntilValid<string>(
+            tryRead: InputReader.ReadString,
+            showQuery: () => Display.ShowQuery($"Do you want to create: {string.Join(", ", typeSet)}?"),
+            showError: () => Display.ErrorMessage(error: "Must enter something"));
+
+        bool isValid = typeSet.FirstOrDefault(type => string.Equals(type, input, StringComparison.OrdinalIgnoreCase)) != null;
+
+        if (!isValid)
         {
-            Console.WriteLine("Not a valid vehicle type");
+            Display.ErrorMessage(error: "Not a valid vehicle type");
+            Display.WaitThenClear();
             return;
         }
 
-        if (_gvm.CreateVehicle(VehicleDetailsFactory.Create(type, ReadVehicleDetails()), out string? error))
+        if (_detailsVM.GetFactory(input, out IVehicleDetailsFactory? _detailsFactory))
         {
-            System.Console.WriteLine("Successfully created vehicle");
-        }
-        else
-        {
-            System.Console.WriteLine($"Error: {error}");
-        }
-        InputReader.WaitForUserKeyPress(_continueMessage);
 
-
-        static VehicleType? GetVehicleType(string input)
-        {
-            foreach (VehicleType type in Enum.GetValues(typeof(VehicleType)))
+            if (_gvm.CreateVehicle(_detailsFactory.Create(ReadVehicleDetails()), out string? error))
             {
-                if (string.Equals(type.ToString(), input,
-                                StringComparison.OrdinalIgnoreCase))
+                Display.SuccessMessage("Successfully created vehicle");
+            }
+            else
+            {
+                Display.ErrorMessage($"Error: {error}");
+            }
+            Display.WaitThenClear();
+        }
+
+    }
+    static VehicleDetails ReadVehicleDetails()
+    {
+        while (true)
+        {
+            try
+            {
+
+                string input = PromptUntilValid<string>(
+                        tryRead: InputReader.ReadString,
+                        showQuery: () => Display.ShowQuery("Enter the format: brand, registration, color, wheel count"),
+                        showError: () => Display.ErrorMessage(error: "Must enter something"));
+                string[] strings = input.Split(',');
+
+                if (int.TryParse(strings[3].Trim(), out int wheelCount))
                 {
-                    return type;
+                    return new VehicleDetails(Brand: strings[0].Trim(), Registration: strings[1].Trim(), Color: strings[2].Trim(), WheelCount: wheelCount);
+                }
+                else
+                {
+                    Display.ErrorMessage("Invalid input. Try again");
                 }
             }
-            return null;
-        }
-        static VehicleDetails ReadVehicleDetails()
-        {
-            while (true)
+            catch (Exception)
             {
-                try
-                {
-                    string input = InputReader.ReadString(query: "Enter the format: brand, registration, color, wheel count");
-                    string[] strings = input.Split(',');
-
-                    if (int.TryParse(strings[3].Trim(), out int wheelCount))
-                    {
-                        return new VehicleDetails(Brand: strings[0].Trim(), Registration: strings[1].Trim(), Color: strings[2].Trim(), WheelCount: wheelCount);
-                    }
-                    else
-                    {
-                        System.Console.WriteLine("Invalid input. Try again\n");
-                    }
-                }
-                catch (Exception)
-                {
-                    System.Console.WriteLine("Incorrect format. Example: Ford, abc123, red, 5");
-                }
+                Display.ErrorMessage("Incorrect format. Example: Ford, abc123, red, 5");
             }
         }
     }
@@ -234,6 +238,7 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
         InputReader.WaitForUserKeyPress(_continueMessage);
 
     }
+
 
 
 }
