@@ -11,6 +11,8 @@ public static class TableFormatter<T> where T : IVehicle
     {
         StringBuilder sb = new();
         const int offset = -20;
+        sb.Append(new string('=', Math.Abs(offset * 6)));
+        sb.Append("\n");
         sb.Append($"{"Type",offset} {"Brand",offset} {"Registration",offset} {"Color",offset} {"Wheels",offset} {"Details",offset}\n");
         sb.Append(new string('=', Math.Abs(offset * 6)));
         sb.Append("\n");

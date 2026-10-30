@@ -4,6 +4,7 @@ using Garage.ViewModels;
 using Garage.Models.Factories;
 using Garage.Models.Interfaces;
 using Garage.Views.UI;
+using Garage.Views.Utilities;
 
 namespace Garage.Views;
 
@@ -57,7 +58,12 @@ public class ConsoleApp
             System.Console.WriteLine(menuCmdsMessage);
             System.Console.WriteLine("========================================");
 
-            if (!int.TryParse(Console.ReadLine(), out int command)) System.Console.WriteLine(invalidCmdMessage);
+            if (!int.TryParse(Console.ReadLine(), out int command))
+            {
+                Display.ErrorMessage(invalidCmdMessage);
+                Display.WaitThenClear();
+                continue;
+            }
 
 
             switch ((Command)command)
@@ -95,12 +101,9 @@ public class ConsoleApp
                     }
                     catch (Exception ex)
                     {
-                        System.Console.WriteLine(ex.Message);
-                        InputReader.WaitForUserKeyPress(_continueMessage);
+                        Display.ErrorMessage(ex.Message);
+                        Display.WaitThenClear();
                     }
-                    break;
-                default:
-                    System.Console.WriteLine(invalidCmdMessage);
                     break;
             }
         }

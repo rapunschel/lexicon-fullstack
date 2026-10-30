@@ -85,18 +85,29 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 
     public void InitTestData()
     {
+        Display.Clear();
         _gvm.InitTestData();
-        System.Console.WriteLine("Test data added");
-        InputReader.WaitForUserKeyPress(_continueMessage);
+        Display.SuccessMessage("Test data added");
+        Display.WaitThenClear();
     }
 
     public void ParkedVehiclesView()
     {
+
         string output = _gvm.GetParkedCarsInfo();
-        System.Console.WriteLine(output == "" ? "No garage is initated" : output);
-        InputReader.WaitForUserKeyPress(_continueMessage);
+        if (output == null) Display.SuccessMessage("No garage is initiated");
+        else Display.ShowTable(output, $"PARKED", shouldClearBefore: true, shouldClearAfter: true);
+
 
     }
+    public void UnparkedVehiclesView()
+    {
+        string output = _gvm.GetNotParkedVehicles();
+        if (output == null) Display.SuccessMessage("No garage is initiated");
+        else Display.ShowTable(output, $"UNPARKED", shouldClearBefore: true, shouldClearAfter: true);
+    }
+
+
 
     public void ParkVehicleView()
     {
@@ -111,7 +122,7 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 
     public void SearchView()
     {
-
+        Display.Clear();
         VehicleDetails details = new();
         string input = InputReader.ReadString(query: "Search with following format (at least one): reg: <reg>, color: <color>, brand: <brand>, wheels: <number of wheels>");
         string[] parts = input.Split(',');
@@ -190,11 +201,7 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 
     }
 
-    public void UnparkedVehiclesView()
-    {
-        System.Console.WriteLine(_gvm.GetNotParkedVehicles());
-        InputReader.WaitForUserKeyPress(_continueMessage);
-    }
+
 
     public void UnparkVehicleView()
     {
