@@ -1,61 +1,32 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Garage.Models;
+using Garage.Models.Data;
 using Garage.Models.Records;
 using Garage.Models.Vehicles;
 using Garage.Utils;
 
 namespace Garage.ViewModels;
 
-public class GarageViewModel
+public class GarageViewModel<T> where T : Vehicle
 {
-    Vehicle[] testData =
-    {
-    new Airplane("Boeing", "AIR101", "White", 6, 850),
-    new Airplane("Airbus", "AIR102", "Blue", 6, 900),
-    new Airplane("Cessna", "AIR103", "White", 3, 300),
-    new Airplane("Embraer", "AIR104", "Red", 6, 870),
-    new Airplane("Bombardier", "AIR105", "Blue", 8, 920),
 
-    new Boat("Yamaha", "BOA101", "White", 0, FuelType.Gasoline),
-    new Boat("Bayliner", "BOA102", "Blue", 0, FuelType.Diesel),
-    new Boat("Sea Ray", "BOA103", "Red", 0, FuelType.Gasoline),
-    new Boat("Jeanneau", "BOA104", "White", 0, FuelType.Diesel),
-    new Boat("Boston Whaler", "BOA105", "Blue", 0, FuelType.Gasoline),
-
-    new Bus("Volvo", "BUS101", "Yellow", 6, 12.0),
-    new Bus("Mercedes-Benz", "BUS102", "Blue", 6, 10.5),
-    new Bus("Scania", "BUS103", "White", 8, 14.0),
-    new Bus("MAN", "BUS104", "Red", 6, 11.2),
-    new Bus("Iveco", "BUS105", "Yellow", 4, 9.8),
-
-    new Car("Toyota", "CAR101", "Red", 4, 1),
-    new Car("Volvo", "CAR102", "Blue", 4, 1),
-    new Car("Ford", "CAR103", "White", 4, 1),
-    new Car("BMW", "CAR104", "Black", 4, 1),
-    new Car("Honda", "CAR105", "Red", 4, 2),
-
-    new Motorcycle("Honda", "MOT101", "Black", 2, 2),
-    new Motorcycle("Yamaha", "MOT102", "Blue", 2, 2),
-    new Motorcycle("Ducati", "MOT103", "Red", 2, 1),
-    new Motorcycle("Kawasaki", "MOT104", "Green", 2, 2),
-    new Motorcycle("Suzuki", "MOT105", "Black", 2, 1)
-};
-    private GarageCollection _collection;
-    private List<Vehicle> _createdVehicles = [];
+    private IGarageCollection<T> _collection;
+    private List<T> _createdVehicles = [];
     private bool _testDataLoaded = false;
-
+    private IEnumerable<T> _testData = TestData<T>.GetTestData();
 
     public GarageViewModel(int capacity)
     {
-        _collection = new GarageCollection(capacity);
+        _collection = new GarageCollection<T>(capacity);
     }
 
 
     public bool CreateNewGarageCollection(int capacity)
     {
-        _collection = new GarageCollection(capacity);
+        _collection = new GarageCollection<T>(capacity);
         return true;
     }
 
@@ -76,7 +47,7 @@ public class GarageViewModel
         return false;
     }
 
-    public bool Search(VehicleDetails details, out List<Vehicle> vehicles)
+    public bool Search(VehicleDetails details, out IEnumerable<T> vehicles)
     {
         vehicles = _collection.Search(details.Matches);
         return true;
@@ -123,7 +94,8 @@ public class GarageViewModel
                     break;
 
             }
-            _createdVehicles.Add(vehicle);
+
+            _createdVehicles.Add((T)vehicle);
             return true;
         }
         catch (Exception ex)
@@ -149,15 +121,15 @@ public class GarageViewModel
         if (!_testDataLoaded)
         {
             _testDataLoaded = true;
-            foreach (var v in testData)
+            foreach (var v in _testData)
             {
                 _createdVehicles.Add(v);
             }
         }
 
-        for (int i = 0; i * 4 < testData.Length; i++)
+        for (int i = 0; i * 4 < _testData.Count(); i++)
         {
-            _collection.Add(testData[i * 3]);
+            _collection.Add(_testData.ElementAt(i * 3));
         }
     }
 }

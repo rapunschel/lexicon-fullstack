@@ -4,6 +4,8 @@ using System.Text;
 using Garage.Models.Records;
 using Garage.Models.Vehicles;
 using Garage.ViewModels;
+using System.Linq;
+
 namespace Garage.Views;
 
 public partial class ConsoleApp
@@ -21,7 +23,7 @@ public partial class ConsoleApp
         InitTestData = 8
     }
 
-    private GarageViewModel _gvm = default!;
+    private GarageViewModel<Vehicle> _gvm = default!;
 
     public void Run()
     {
@@ -122,7 +124,7 @@ public partial class ConsoleApp
                             break;
                         case Command.CreateGarage:
                             int capacity = Utilities.ReadPositiveInt(query: "How many parking spaces?");
-                            _gvm = new GarageViewModel(capacity);
+                            _gvm = new GarageViewModel<Vehicle>(capacity);
                             System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
                             WaitForUserKeyPress();
                             break;
@@ -191,29 +193,54 @@ public partial class ConsoleApp
             }
         }
 
-        if (_gvm.Search(details, out List<Vehicle> items))
-        {
-            if (items.Count == 0)
-            {
-                System.Console.WriteLine("No matches");
-            }
-            else
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("Search results:\n");
-                System.Console.WriteLine("========================================");
-                foreach (var item in items)
-                {
-                    sb.Append($"{item}\n");
-                }
+        // if (_gvm.Search(details, out IEnumerable<Vehicle> items))
+        // {
+        //     if (!items.Any())
+        //     {
+        //         System.Console.WriteLine("No matches");
+        //     }
+        //     else
+        //     {
+        //         StringBuilder sb = new StringBuilder();
+        //         sb.Append("Search results:\n");
+        //         System.Console.WriteLine("========================================");
+        //         foreach (var item in items)
+        //         {
+        //             sb.Append($"{item}\n");
+        //         }
 
-                System.Console.WriteLine(sb.ToString());
-            }
-        }
-        else
+        //         System.Console.WriteLine(sb.ToString());
+        //     }
+        // }
+        // else
+        // {
+        //     System.Console.WriteLine("Search failed.");
+        // }
+
+
+        if (!_gvm.Search(details, out IEnumerable<Vehicle> items))
         {
             System.Console.WriteLine("Search failed.");
+            return;
+
         }
+
+        if (!items.Any())
+        {
+            System.Console.WriteLine("No matches");
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.Append("Search results:\n");
+        System.Console.WriteLine("========================================");
+        foreach (var item in items)
+        {
+            sb.Append($"{item}\n");
+        }
+
+        System.Console.WriteLine(sb.ToString());
+
     }
 
     private void ParkVehicleView()
@@ -266,7 +293,7 @@ public partial class ConsoleApp
                     System.Console.WriteLine("Invalid input. Try again\n");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 System.Console.WriteLine("Incorrect format. Example: Ford, abc123, red, 5");
             }

@@ -7,16 +7,16 @@ using Garage.Utils;
 
 namespace Garage.Models;
 
-public class GarageCollection
+public class GarageCollection<T> : IGarageCollection<T> where T : Vehicle
 {
-    private List<Vehicle> _storage = new List<Vehicle>();
+    private readonly List<T> _storage = new List<T>();
     private int _capacity = 0;
 
-    public GarageCollection(List<Vehicle> items)
+    public GarageCollection(List<T> items)
     {
         foreach (var item in items)
         {
-            _storage.Add(item.ShallowCopy());
+            _storage.Add((T)item.ShallowCopy());
         }
     }
 
@@ -26,12 +26,12 @@ public class GarageCollection
     }
 
 
-    public List<Vehicle> Search(Func<Vehicle, bool> matches)
+    public IEnumerable<T> Search(Func<T, bool> matches)
     {
-        return _storage.FindAll(item => matches(item)).ConvertAll(item => item.ShallowCopy());
+        return (IEnumerable<T>)_storage.FindAll(item => matches(item)).ConvertAll(item => item.ShallowCopy());
     }
 
-    public bool Add(Vehicle item)
+    public bool Add(T item)
     {
         if (_storage.Count >= _capacity) return false;
 
@@ -48,7 +48,7 @@ public class GarageCollection
     {
         if (FindVehicle(regNumber, out Vehicle? vehicle))
         {
-            _storage.Remove(vehicle);
+            _storage.Remove((T)vehicle);
             return true;
         }
         return false;
@@ -69,7 +69,6 @@ public class GarageCollection
         }
         StringBuilder sb = TableFormatter.FormatTable(_storage);
         sb.Append(emptySlotsMsg);
-
 
         return sb.ToString();
     }

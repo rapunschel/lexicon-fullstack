@@ -7,7 +7,7 @@ namespace Garage.Utils;
 
 public static class TableFormatter
 {
-    public static StringBuilder FormatTable(List<Vehicle> vehicles)
+    public static StringBuilder FormatTable(IEnumerable<Vehicle> vehicles)
     {
         StringBuilder sb = new();
         const int offset = -20;
