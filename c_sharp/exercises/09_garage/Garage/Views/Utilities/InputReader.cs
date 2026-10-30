@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Garage.Models.Vehicles;
 
 
@@ -96,20 +97,17 @@ public static class InputReader
         return text != "";
     }
 
-    public static bool ReadFuelTypeEnum(out FuelType? fuel)
+    public static bool ReadFuelTypeEnum(out FuelType fuel)
     {
 
         string? input = Console.ReadLine();
-        foreach (FuelType type in Enum.GetValues(typeof(FuelType)))
+        if (Enum.TryParse(input, ignoreCase: true, out FuelType result) &&
+            Enum.IsDefined(result))
         {
-            if (string.Equals(type.ToString(), input,
-                StringComparison.OrdinalIgnoreCase))
-            {
-                fuel = type;
-                return true;
-            }
+            fuel = result;
+            return true;
         }
-        fuel = null;
+        fuel = default;
         return false;
 
     }
