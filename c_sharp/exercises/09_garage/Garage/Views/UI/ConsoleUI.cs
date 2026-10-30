@@ -22,8 +22,6 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
         _gvm = gvm;
     }
 
-
-
     public void CreateGarageView()
     {
         Display.Clear();
@@ -45,36 +43,43 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 
     public void CreateVehicleView()
     {
-        throw new NotImplementedException();
-        HashSet<string> typeSet = [.. AssemblyScanner.FindConcreteSubtypesOfT(typeof(T)).Select(type => type.Name)];
-        string input = InputReader.PromptUntilValid<string>(
-            tryRead: InputReader.ReadString,
-            showQuery: () => Display.ShowQuery($"Do you want to create: {string.Join(", ", typeSet)}?"),
-            showError: () => Display.ErrorMessage(error: "Must enter something"));
-
-        bool isValid = typeSet.FirstOrDefault(type => string.Equals(type, input, StringComparison.OrdinalIgnoreCase)) != null;
-
-        if (!isValid)
+        try
         {
-            Display.ErrorMessage(error: "Not a valid vehicle type");
-            Display.WaitThenClear();
-            return;
+            HashSet<string> typeSet = [.. AssemblyScanner.FindConcreteSubtypesOfT(typeof(T)).Select(type => type.Name)];
+            string input = InputReader.PromptUntilValid<string>(
+                tryRead: InputReader.ReadString,
+                showQuery: () => Display.ShowQuery($"Do you want to create: {string.Join(", ", typeSet)}?"),
+                showError: () => Display.ErrorMessage(error: "Must enter something"));
+
+            bool isValid = typeSet.FirstOrDefault(type => string.Equals(type, input, StringComparison.OrdinalIgnoreCase)) != null;
+
+            if (!isValid)
+            {
+                Display.ErrorMessage(error: "Not a valid vehicle type");
+                return;
+            }
+
+            if (VehicleDetailsReaderUI.GetRecord(input, out VehicleDetails? details))
+            {
+
+                if (_gvm.CreateVehicle(details))
+                {
+                    Display.SuccessMessage("Successfully created vehicle");
+                }
+                else
+                {
+                    Display.ErrorMessage($"Failed to create vehicle. Unexpected problem");
+                }
+            }
         }
-
-        // if (_detailsVM.GetFactory(input, out IVehicleDetailsFactory? _detailsFactory))
-        // {
-
-        //     if (_gvm.CreateVehicle(_detailsFactory.Create(ReadVehicleDetails()), out string? error))
-        //     {
-        //         Display.SuccessMessage("Successfully created vehicle");
-        //     }
-        //     else
-        //     {
-        //         Display.ErrorMessage($"Error: {error}");
-        //     }
-        //     Display.WaitThenClear();
-        // }
-
+        catch (Exception ex)
+        {
+            Display.ErrorMessage(ex.Message);
+        }
+        finally
+        {
+            Display.WaitThenClear();
+        }
     }
 
 

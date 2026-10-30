@@ -61,19 +61,11 @@ public class GarageViewModel<T> where T : class, IVehicle
     }
 
 
-    public bool CreateVehicle(VehicleDetails details, out string? error)
+    public bool CreateVehicle(VehicleDetails details)
     {
-        error = "";
-        try
-        {
-            _createdVehicles.Add(_factory.Create(details));
-            return true;
-        }
-        catch (Exception ex)
-        {
-            error = ex.Message;
-            return false;
-        }
+
+        _createdVehicles.Add(_factory.Create(details));
+        return true;
     }
 
 
