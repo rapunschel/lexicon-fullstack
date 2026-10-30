@@ -6,6 +6,7 @@ namespace Garage.Models.Interfaces;
 public interface IUI<T>
 {
     public void CreateGarageView();
+    public void NewGarageView();
     public void CreateVehicleView();
     public void ParkVehicleView();
     public void UnparkVehicleView();
