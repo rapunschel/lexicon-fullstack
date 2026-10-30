@@ -113,5 +113,15 @@ public static class InputReader
         return false;
 
     }
+    public delegate bool TryReadValue<TValue>(out TValue value);
+    public static TValue PromptUntilValid<TValue>(TryReadValue<TValue> tryRead, Action showQuery, Action showError)
+    {
+        while (true)
+        {
+            showQuery.Invoke();
+            if (tryRead(out TValue value)) return value;
 
+            showError();
+        }
+    }
 }

@@ -15,7 +15,6 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 {
 
     private GarageViewModel<T> _gvm;
-    private VehicleDetailsViewModel _detailsVM = new();
     private const string _continueMessage = "Press any key to continue...";
 
     public ConsoleUI(GarageViewModel<T> gvm)
@@ -23,24 +22,14 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
         _gvm = gvm;
     }
 
-    private delegate bool TryReadValue<TValue>(out TValue value);
-    private static TValue PromptUntilValid<TValue>(TryReadValue<TValue> tryRead, Action showQuery, Action showError)
-    {
-        while (true)
-        {
-            showQuery.Invoke();
-            if (tryRead(out TValue value)) return value;
 
-            showError();
-        }
-    }
 
     public void CreateGarageView()
     {
         Display.Clear();
         Display.CreateGarageInit(typeof(T).Name);
 
-        int capacity = PromptUntilValid<int>(
+        int capacity = InputReader.PromptUntilValid<int>(
             tryRead: InputReader.ReadPositiveInt,
             showQuery: () => Display.ShowQuery("How many parking slots?"),
             showError: () => Display.ErrorMessage(error: "Not a positive integer"));
@@ -56,8 +45,9 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 
     public void CreateVehicleView()
     {
+        throw new NotImplementedException();
         HashSet<string> typeSet = [.. AssemblyScanner.FindConcreteSubtypesOfT(typeof(T)).Select(type => type.Name)];
-        string input = PromptUntilValid<string>(
+        string input = InputReader.PromptUntilValid<string>(
             tryRead: InputReader.ReadString,
             showQuery: () => Display.ShowQuery($"Do you want to create: {string.Join(", ", typeSet)}?"),
             showError: () => Display.ErrorMessage(error: "Must enter something"));
@@ -71,49 +61,22 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
             return;
         }
 
-        if (_detailsVM.GetFactory(input, out IVehicleDetailsFactory? _detailsFactory))
-        {
+        // if (_detailsVM.GetFactory(input, out IVehicleDetailsFactory? _detailsFactory))
+        // {
 
-            if (_gvm.CreateVehicle(_detailsFactory.Create(ReadVehicleDetails()), out string? error))
-            {
-                Display.SuccessMessage("Successfully created vehicle");
-            }
-            else
-            {
-                Display.ErrorMessage($"Error: {error}");
-            }
-            Display.WaitThenClear();
-        }
+        //     if (_gvm.CreateVehicle(_detailsFactory.Create(ReadVehicleDetails()), out string? error))
+        //     {
+        //         Display.SuccessMessage("Successfully created vehicle");
+        //     }
+        //     else
+        //     {
+        //         Display.ErrorMessage($"Error: {error}");
+        //     }
+        //     Display.WaitThenClear();
+        // }
 
     }
-    static VehicleDetails ReadVehicleDetails()
-    {
-        while (true)
-        {
-            try
-            {
 
-                string input = PromptUntilValid<string>(
-                        tryRead: InputReader.ReadString,
-                        showQuery: () => Display.ShowQuery("Enter the format: brand, registration, color, wheel count"),
-                        showError: () => Display.ErrorMessage(error: "Must enter something"));
-                string[] strings = input.Split(',');
-
-                if (int.TryParse(strings[3].Trim(), out int wheelCount))
-                {
-                    return new VehicleDetails(Brand: strings[0].Trim(), Registration: strings[1].Trim(), Color: strings[2].Trim(), WheelCount: wheelCount);
-                }
-                else
-                {
-                    Display.ErrorMessage("Invalid input. Try again");
-                }
-            }
-            catch (Exception)
-            {
-                Display.ErrorMessage("Incorrect format. Example: Ford, abc123, red, 5");
-            }
-        }
-    }
 
     public void InitTestData()
     {
