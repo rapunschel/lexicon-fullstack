@@ -4,7 +4,7 @@ using Garage.Models.Vehicles;
 
 namespace Garage.Views;
 
-public static class Utilities
+public static class InputReader
 {
     public static int ReadPositiveInt(string query, string errorMessage = "Not a valid number.")
     {

@@ -9,7 +9,7 @@ using Garage.Models.Factories;
 
 namespace Garage.Views;
 
-public partial class ConsoleApp
+public class ConsoleApp
 {
     private enum Command
     {
@@ -124,7 +124,7 @@ public partial class ConsoleApp
                             isRunning = false;
                             break;
                         case Command.CreateGarage:
-                            int capacity = Utilities.ReadPositiveInt(query: "How many parking spaces?");
+                            int capacity = InputReader.ReadPositiveInt(query: "How many parking spaces?");
                             _gvm = new GarageViewModel<IVehicle>(factory: new VehicleFactory(), capacity: capacity);
                             System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
                             WaitForUserKeyPress();
@@ -143,7 +143,7 @@ public partial class ConsoleApp
     {
 
         VehicleDetails details = new();
-        string input = Utilities.ReadString(query: "Search with following format (at least one): reg: <reg>, color: <color>, brand: <brand>, wheels: <number of wheels>");
+        string input = InputReader.ReadString(query: "Search with following format (at least one): reg: <reg>, color: <color>, brand: <brand>, wheels: <number of wheels>");
         string[] parts = input.Split(',');
 
         foreach (string part in parts)
@@ -221,7 +221,7 @@ public partial class ConsoleApp
 
     private void ParkVehicleView()
     {
-        if (_gvm.ParkVehicle(Utilities.ReadString(query: "Park vehicle with registration:")))
+        if (_gvm.ParkVehicle(InputReader.ReadString(query: "Park vehicle with registration:")))
         {
             System.Console.WriteLine("Vehicle was parked.");
         }
@@ -230,7 +230,7 @@ public partial class ConsoleApp
 
     private void UnparkVehicleView()
     {
-        if (_gvm.RemoveParkedVehicle(Utilities.ReadString(query: "Remove vehicle from garage with registration:")))
+        if (_gvm.RemoveParkedVehicle(InputReader.ReadString(query: "Remove vehicle from garage with registration:")))
         {
             System.Console.WriteLine("Vehicle was taken out of garage.");
         }
@@ -241,7 +241,7 @@ public partial class ConsoleApp
     {
         while (true)
         {
-            int capacity = Utilities.ReadPositiveInt(query: "How many parking spaces?");
+            int capacity = InputReader.ReadPositiveInt(query: "How many parking spaces?");
             if (_gvm.CreateNewGarageCollection(capacity))
             {
                 System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
@@ -257,7 +257,7 @@ public partial class ConsoleApp
         {
             try
             {
-                string input = Utilities.ReadString(query: "Enter the format: brand, registration, color, wheel count");
+                string input = InputReader.ReadString(query: "Enter the format: brand, registration, color, wheel count");
                 string[] strings = input.Split(',');
 
                 if (int.TryParse(strings[3].Trim(), out int wheelCount))
@@ -278,7 +278,7 @@ public partial class ConsoleApp
 
     private void CreateVehicleView()
     {
-        if (GetVehicleType(Utilities.ReadString(
+        if (GetVehicleType(InputReader.ReadString(
                 "Do you want to create: airplane, car, bus, motorcycle or boat?"))
             is not VehicleType type)
         {

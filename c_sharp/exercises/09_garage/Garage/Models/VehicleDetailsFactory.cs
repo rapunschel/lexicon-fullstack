@@ -13,35 +13,35 @@ public static class VehicleDetailsFactory
             common.Brand,
             common.Color,
             common.WheelCount,
-            Utilities.ReadPositiveInt("Enter number of engines:")),
+            InputReader.ReadPositiveInt("Enter number of engines:")),
 
         VehicleType.Bus => new BusDetails(
             common.Registration,
             common.Brand,
             common.Color,
             common.WheelCount,
-            Length: Utilities.ReadPositiveDouble("Enter length of bus:")),
+            Length: InputReader.ReadPositiveDouble("Enter length of bus:")),
 
         VehicleType.Motorcycle => new MotorcycleDetails(
             common.Registration,
             common.Brand,
             common.Color,
             common.WheelCount,
-            Seats: Utilities.ReadPositiveInt("How many seats:")),
+            Seats: InputReader.ReadPositiveInt("How many seats:")),
 
         VehicleType.Boat => new BoatDetails(
             common.Registration,
             common.Brand,
             common.Color,
             common.WheelCount,
-            Fuel: Utilities.ReadFuelTypeEnum("Fuel type (Gasoline / Diesel): ")),
+            Fuel: InputReader.ReadFuelTypeEnum("Fuel type (Gasoline / Diesel): ")),
 
         VehicleType.Airplane => new AirplaneDetails(
             common.Registration,
             common.Brand,
             common.Color,
             common.WheelCount,
-            Speed: Utilities.ReadPositiveInt("Enter speed:")),
+            Speed: InputReader.ReadPositiveInt("Enter speed:")),
 
         _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
     };
