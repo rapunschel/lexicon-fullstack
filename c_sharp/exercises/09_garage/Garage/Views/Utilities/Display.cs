@@ -5,7 +5,9 @@ public static class Display
 {
     private static void WaitForKeyPress()
     {
+        Console.ForegroundColor = ConsoleColor.Yellow;
         System.Console.WriteLine("Press any key to continue...");
+        Console.ResetColor();
     }
 
     public static void CreateGarageInit(string vehicleType)
@@ -18,7 +20,10 @@ public static class Display
 
     public static void ShowQuery(string query)
     {
+        Console.ForegroundColor = ConsoleColor.Cyan;
         System.Console.WriteLine(query);
+        Console.ResetColor();
+
     }
 
 
