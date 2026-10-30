@@ -79,9 +79,9 @@ public static class InputReader
 
     }
 
-    public static bool ReadPositiveDouble(out int value)
+    public static bool ReadPositiveDouble(out double value)
     {
-        return int.TryParse(Console.ReadLine(), out value) && value >= 0;
+        return double.TryParse(Console.ReadLine(), out value) && value >= 0;
 
     }
 
