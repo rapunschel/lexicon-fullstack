@@ -114,7 +114,7 @@ public static class VehicleDetailsReaderUI
 
                 string input = InputReader.PromptUntilValid<string>(
                         tryRead: InputReader.ReadString,
-                        showQuery: () => Display.ShowQuery("Enter the format: brand registratio, color wheel count"),
+                        showQuery: () => Display.ShowQuery("Enter the format (space separated): brand registration color wheel count"),
                         showError: () => Display.ErrorMessage(error: "Must enter something"));
                 string[] strings = input.Split(' ');
 
