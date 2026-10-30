@@ -22,7 +22,6 @@ public class ConsoleApp
         InitTestData = 8
     }
 
-    private GarageViewModel<IVehicle> _gvm = default!;
     private const string _continueMessage = "Press any key to continue...";
     public void Run()
     {
@@ -44,7 +43,7 @@ public class ConsoleApp
         System.Console.WriteLine(headMenuMessage);
 
         int capacity = InputReader.ReadPositiveInt(query: "How many parking spaces?");
-        _gvm = new GarageViewModel<IVehicle>(factory: new VehicleFactory(), capacity: capacity);
+        GarageViewModel<IVehicle> _gvm = new GarageViewModel<IVehicle>(factory: new VehicleFactory(), capacity: capacity);
         System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
         InputReader.WaitForUserKeyPress(_continueMessage);
         IUI<IVehicle> ui = new ConsoleUI<IVehicle>(gvm: _gvm);
