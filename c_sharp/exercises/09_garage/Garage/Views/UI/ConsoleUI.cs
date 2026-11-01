@@ -53,7 +53,7 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
             HashSet<string> typeSet = [.. AssemblyScanner.FindConcreteSubtypesOfT(typeof(T)).Select(type => type.Name)];
             input = InputReader.PromptUntilValid<string>(
                tryRead: InputReader.ReadString,
-               showQuery: () => Display.ShowQuery($"Do you want to create: {string.Join(", ", typeSet)}?"),
+               showQuery: () => Display.ShowQuery($"Choose what to create: {string.Join(", ", typeSet)}"),
                showError: () => Display.ErrorMessage(error: "Must enter something"));
 
             bool isValid = typeSet.FirstOrDefault(type => string.Equals(type, input, StringComparison.OrdinalIgnoreCase)) != null;
