@@ -4,11 +4,11 @@ using Garage.Models.Records;
 using Garage.Models.Vehicles;
 using Garage.ViewModels;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using Garage.Views.Utilities;
 using Garage.Models.Utilities;
 using Garage.Models.Enums;
+using Garage.Utils;
 
 namespace Garage.Views.UI;
 
@@ -154,83 +154,30 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 
     public void SearchView()
     {
-        Display.Clear();
-        VehicleDetails details = new();
-        string input = InputReader.ReadString(query: "Search with following format (at least one): reg: <reg>, color: <color>, brand: <brand>, wheels: <number of wheels>");
-        string[] parts = input.Split(',');
-
-        foreach (string part in parts)
+        try
         {
-            int colonIndex = part.IndexOf(":");
-
-            if (colonIndex <= 0 || colonIndex == part.Length - 1)
-            {
-                Console.WriteLine(
-                    "Invalid format. Example: reg: abc123, color: red");
-                return;
-            }
-            string key = part[..colonIndex].Trim();
-            string value = part[(colonIndex + 1)..].Trim();
-
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                Console.WriteLine(
-                    "Missing value. Example: reg: abc123, color: red");
-                return;
-            }
-
-            switch (key.ToLower())
-            {
-                case "reg":
-                    details.Registration = value;
-                    break;
-                case "color":
-                    details.Color = value;
-                    break;
-                case "brand":
-                    details.Brand = value;
-                    break;
-                case "wheels":
-                    if (int.TryParse(value, out int result) && result >= 0)
+            if (VehicleDetailsReaderUI.ReadVehicleSearchDetails(out VehicleDetails details))
+                if (_gvm.Search(details, out IEnumerable<T> items))
+                {
+                    if (!items.Any())
                     {
-                        details.WheelCount = result;
-                    }
-                    else
-                    {
-                        System.Console.WriteLine("Invalid wheels parameter or non-positive value");
+                        Display.SuccessMessage("No matches");
                         return;
                     }
-                    break;
-                default:
-                    System.Console.WriteLine("Failed to parse search query.");
-                    return;
-            }
-        }
 
-        if (!_gvm.Search(details, out IEnumerable<T> items))
+                    Display.ShowTable(TableFormatter<T>.FormatTable(items).ToString(), "Search results");
+                }
+                else
+                    Display.ErrorMessage("Search failed.");
+        }
+        catch (Exception ex)
         {
-            System.Console.WriteLine("Search failed.");
-            return;
-
+            System.Console.WriteLine(ex.Message);
         }
-
-        if (!items.Any())
+        finally
         {
-            System.Console.WriteLine("No matches");
-            return;
+            Display.WaitThenClear();
         }
-
-        StringBuilder sb = new StringBuilder();
-        sb.Append("Search results:\n");
-        System.Console.WriteLine("========================================");
-        foreach (var item in items)
-        {
-            sb.Append($"{item}\n");
-        }
-
-        System.Console.WriteLine(sb.ToString());
-        InputReader.WaitForUserKeyPress(_continueMessage);
-
     }
 
 

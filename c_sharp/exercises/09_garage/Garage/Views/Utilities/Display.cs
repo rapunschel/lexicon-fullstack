@@ -3,6 +3,14 @@ namespace Garage.Views.Utilities;
 
 public static class Display
 {
+
+    private static ConsoleColor _menuColor = ConsoleColor.Magenta;
+    private static ConsoleColor _mainTextColor = ConsoleColor.Cyan;
+    private static ConsoleColor _errorTextColor = ConsoleColor.DarkRed;
+    private static ConsoleColor _successTextColor = ConsoleColor.DarkGreen;
+    private const int _offset = -120;
+
+    private const int _menuTextCentered = 60;
     public static void WaitForKeyPressMessage()
     {
         Console.ForegroundColor = ConsoleColor.Yellow;
@@ -24,8 +32,8 @@ public static class Display
 
 
         string[] lines = table.Split(Environment.NewLine);
-        Console.ForegroundColor = ConsoleColor.Magenta;
-        System.Console.WriteLine($"{desc,60}");
+        Console.ForegroundColor = _menuColor;
+        System.Console.WriteLine($"{desc,_menuTextCentered}");
 
         for (int i = 0; i < lines.Length; i++)
         {
@@ -49,24 +57,22 @@ public static class Display
 
     public static void ShowQuery(string query)
     {
-        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.ForegroundColor = _mainTextColor;
         System.Console.WriteLine(query);
         Console.ResetColor();
 
     }
 
-
-
     public static void SuccessMessage(string message)
     {
-        Console.ForegroundColor = ConsoleColor.DarkGreen;
+        Console.ForegroundColor = _successTextColor;
         Console.WriteLine(message);
         Console.ResetColor();
     }
 
     public static void ErrorMessage(string error)
     {
-        Console.ForegroundColor = ConsoleColor.DarkRed;
+        Console.ForegroundColor = _errorTextColor;
         Console.WriteLine(error);
         Console.ResetColor();
     }

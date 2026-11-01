@@ -30,6 +30,60 @@ public static class VehicleDetailsReaderUI
         return true;
 
     }
+
+    public static bool ReadVehicleSearchDetails(out VehicleDetails details)
+    {
+        string input = InputReader.PromptUntilValid<string>(
+          tryRead: InputReader.ReadString,
+          showQuery: () => Display.ShowQuery($"Search with following format (at least one): reg: <reg>, color: <color>, brand: <brand>, wheels: <number of wheels>"),
+          showError: () => Display.ErrorMessage(error: "Must enter something")
+      );
+        details = new();
+        string[] parts = input.Split(',');
+
+        foreach (string part in parts)
+        {
+            int colonIndex = part.IndexOf(":");
+
+            if (colonIndex <= 0 || colonIndex == part.Length - 1)
+            {
+                Display.ErrorMessage(
+                    "Invalid format. Example: reg: abc123, color: red");
+                return false;
+            }
+            string key = part[..colonIndex].Trim();
+            string value = part[(colonIndex + 1)..].Trim();
+
+            switch (key.ToLower())
+            {
+                case "reg":
+                    details.Registration = value;
+                    break;
+                case "color":
+                    details.Color = value;
+                    break;
+                case "brand":
+                    details.Brand = value;
+                    break;
+                case "wheels":
+                    if (int.TryParse(value, out int result) && result >= 0)
+                    {
+                        details.WheelCount = result;
+                    }
+                    else
+                    {
+                        Display.ErrorMessage("Wheels: must enter a non-negative number");
+                        return false;
+                    }
+                    break;
+                default:
+                    Display.ErrorMessage("Failed to parse search query.");
+                    return false;
+            }
+        }
+
+        return true;
+    }
     private static CarDetails GetCarDetails(VehicleDetails common)
     {
         int engineCount = InputReader.PromptUntilValid<int>(
@@ -133,4 +187,6 @@ public static class VehicleDetailsReaderUI
             }
         }
     }
+
+
 }
