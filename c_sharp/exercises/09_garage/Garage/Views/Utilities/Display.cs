@@ -4,7 +4,7 @@ namespace Garage.Views.Utilities;
 public static class Display
 {
 
-    private static ConsoleColor _menuColor = ConsoleColor.Magenta;
+    private static ConsoleColor _menuTextColor = ConsoleColor.Yellow;
     private static ConsoleColor _mainTextColor = ConsoleColor.Cyan;
     private static ConsoleColor _errorTextColor = ConsoleColor.DarkRed;
     private static ConsoleColor _successTextColor = ConsoleColor.DarkGreen;
@@ -13,11 +13,39 @@ public static class Display
     private const int _menuTextCentered = 60;
     public static void WaitForKeyPressMessage()
     {
-        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.ForegroundColor = ConsoleColor.DarkYellow;
         System.Console.WriteLine("Press any key to continue...");
         Console.ResetColor();
     }
 
+
+    public static void ShowWelcomeMessage()
+    {
+        Console.ForegroundColor = _menuTextColor;
+        const string menuMessage = "Welcome to the Garage";
+        System.Console.WriteLine(menuMessage);
+        Console.ResetColor();
+
+    }
+    public static void ShowGarageCommands()
+    {
+        const string menuCommands = "\n0: To exit program.\n" +
+                         "1: Create Garage (this will override existing garage).\n" +
+                         "2: Create vehicle.\n" +
+                         "3: Park vehicle in garage\n" +
+                         "4: Search vehicle in garage.\n" +
+                         "5: Take out vehicle from garage.\n" +
+                         "6: List all parked vehicles\n" +
+                         "7: List all unparked vehicles\n" +
+                         "8: Creates vehicles and populates garage with a few vehicles if it has available spaces";
+        Console.ForegroundColor = _menuTextColor;
+        System.Console.WriteLine(new string('=', Math.Abs(_offset)));
+        System.Console.WriteLine(menuCommands);
+        System.Console.WriteLine(new string('=', Math.Abs(_offset)));
+
+        Console.ResetColor();
+
+    }
     public static void ShowTable(string table, string desc, bool shouldClearBefore = true, bool shouldClearAfter = true)
     {
         if (shouldClearBefore) Clear();
@@ -32,7 +60,7 @@ public static class Display
 
 
         string[] lines = table.Split(Environment.NewLine);
-        Console.ForegroundColor = _menuColor;
+        Console.ForegroundColor = _menuTextColor;
         System.Console.WriteLine($"{desc,_menuTextCentered}");
 
         for (int i = 0; i < lines.Length; i++)

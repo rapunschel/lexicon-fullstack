@@ -131,7 +131,7 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
                     Display.ErrorMessage("Garage is full");
                     break;
                 case ParkResult.VehicleNotCreated:
-                    Display.ErrorMessage($"Must first create a {GetVehicleTypeName()}");
+                    Display.ErrorMessage($"{GetVehicleTypeName()} with registration: {input} not found.");
                     break;
                 default:
                     throw new InvalidOperationException($"Unexpected result: {result}");

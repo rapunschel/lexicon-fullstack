@@ -25,19 +25,7 @@ public class ConsoleApp
 
     public void Run()
     {
-        const string headMenuMessage = "Welcome to the Garage";
-        const string menuCmdsMessage = "\n0: To exit program.\n" +
-                         "1: Create Garage (this will override existing garage).\n" +
-                         "2: Create vehicle.\n" +
-                         "3: Park vehicle in garage\n" +
-                         "4: Search vehicle in garage.\n" +
-                         "5: Take out vehicle from garage.\n" +
-                         "6: List all parked vehicles\n" +
-                         "7: List all unparked vehicles\n" +
-                         "8: Creates vehicles and populates garage with a few vehicles if it has available spaces";
 
-
-        System.Console.WriteLine(headMenuMessage);
 
         int capacity = InputReader.PromptUntilValid<int>(
             tryRead: InputReader.ReadPositiveInt,
@@ -51,12 +39,13 @@ public class ConsoleApp
         Display.WaitForKeyPressMessage();
         IUI<IVehicle> ui = new ConsoleUI<IVehicle>(gvm: _gvm);
 
+
         bool isRunning = true;
         while (isRunning)
         {
-            System.Console.WriteLine("========================================");
-            System.Console.WriteLine(menuCmdsMessage);
-            System.Console.WriteLine("========================================");
+            Display.Clear();
+            Display.ShowWelcomeMessage();
+            Display.ShowGarageCommands();
 
             if (!int.TryParse(Console.ReadLine(), out int command))
             {
