@@ -5,7 +5,6 @@ namespace Garage.Models.Vehicles;
 
 public abstract class Vehicle : IVehicle
 {
-    private static HashSet<string> _set = [];
 
 
     public string RegNumber
@@ -13,17 +12,18 @@ public abstract class Vehicle : IVehicle
         get;
         private set
         {
-            string normalized = value.Trim().ToUpperInvariant();
 
-            if (!Regex.IsMatch(normalized, @"\A[A-Z]{3}[0-9]{3}\z"))
+
+            if (!VehicleRegister.IsValidRegNumber(value))
                 throw new ArgumentException(
                     "Registration number must be 3 letters followed by 3 digits. Example: abc123");
 
-            if (_set.Contains(normalized))
+            if (VehicleRegister.IsUnique(value))
                 throw new ArgumentException("Reg number is not unique");
 
-            field = normalized;
-            _set.Add(normalized);
+            field = value.Trim().ToUpperInvariant();
+
+            VehicleRegister.Add(value);
         }
     }
     public string Color
