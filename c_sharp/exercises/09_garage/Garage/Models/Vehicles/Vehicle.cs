@@ -12,8 +12,6 @@ public abstract class Vehicle : IVehicle
         get;
         private set
         {
-
-
             if (!VehicleRegister.IsValidRegNumber(value))
                 throw new ArgumentException(
                     "Registration number must be 3 letters followed by 3 digits. Example: abc123");
