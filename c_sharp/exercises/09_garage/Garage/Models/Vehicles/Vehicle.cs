@@ -15,12 +15,10 @@ public abstract class Vehicle : IVehicle
                 throw new ArgumentException(
                     "Registration number must be 3 letters followed by 3 digits. Example: abc123");
 
-            if (VehicleRegister.IsUnique(value))
+            if (!VehicleRegister.IsUnique(value))
                 throw new ArgumentException("Reg number is not unique");
 
             field = value.Trim().ToUpperInvariant();
-
-            VehicleRegister.Add(value);
         }
     }
     public string Color

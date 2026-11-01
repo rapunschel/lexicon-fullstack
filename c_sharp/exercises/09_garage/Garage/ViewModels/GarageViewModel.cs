@@ -16,9 +16,7 @@ public class GarageViewModel<T> where T : class, IVehicle
 {
 
     private IGarageCollection<T> _collection;
-    private List<T> _createdVehicles = [];
-    private bool _testDataLoaded = false;
-    private IEnumerable<T> _testData = TestData<T>.GetTestData();
+    private IEnumerable<T>? _testData;
     private IVehicleFactory<T> _factory;
     public GarageViewModel(IVehicleFactory<T> factory, int capacity)
     {
@@ -35,19 +33,19 @@ public class GarageViewModel<T> where T : class, IVehicle
 
     public ParkResult ParkVehicle(string registration)
     {
-        T? vehicle = _createdVehicles.FirstOrDefault(item =>
-            string.Equals(item.RegNumber, registration, StringComparison.OrdinalIgnoreCase));
 
-        if (vehicle == null) return ParkResult.VehicleNotCreated;
-
-        var result = _collection.Add(vehicle);
-        return result switch
+        if (VehicleRegister.TryGetVehicle(registration, out T? vehicle))
         {
-            CollectionResult.Added => ParkResult.Parked,
-            CollectionResult.AtCapacity => ParkResult.AtCapacity,
-            CollectionResult.DuplicateRegistration => ParkResult.AlreadyParked,
-            _ => throw new InvalidOperationException($"Unexpected operation from Add: {result}")
-        };
+            var result = _collection.Add(vehicle);
+            return result switch
+            {
+                CollectionResult.Added => ParkResult.Parked,
+                CollectionResult.AtCapacity => ParkResult.AtCapacity,
+                CollectionResult.DuplicateRegistration => ParkResult.AlreadyParked,
+                _ => throw new InvalidOperationException($"Unexpected operation from Add: {result}")
+            };
+        }
+        return ParkResult.VehicleNotCreated;
     }
 
     public bool Search(VehicleDetails details, out IEnumerable<T> vehicles)
@@ -68,14 +66,10 @@ public class GarageViewModel<T> where T : class, IVehicle
     }
 
 
-    public bool CreateVehicle(VehicleDetails details)
+    public void CreateVehicle(VehicleDetails details)
     {
-
-        _createdVehicles.Add(_factory.Create(details));
-        return true;
+        VehicleRegister.Add(_factory.Create(details));
     }
-
-
 
     public string GetParkedCarsInfo()
     {
@@ -83,24 +77,19 @@ public class GarageViewModel<T> where T : class, IVehicle
     }
     public string GetNotParkedVehicles()
     {
-        StringBuilder sb = TableFormatter<T>.FormatTable(_createdVehicles);
+        StringBuilder sb = TableFormatter<T>.FormatTable(VehicleRegister.GetUnparkedVehicles<T>());
         return sb.ToString();
     }
 
     public void InitTestData()
     {
-        if (!_testDataLoaded)
-        {
-            _testDataLoaded = true;
-            foreach (var v in _testData)
-            {
-                _createdVehicles.Add(v);
-            }
-        }
+        if (_testData is null)
+            _testData = TestData<T>.GetTestData();
 
         for (int i = 0; i * 4 < _testData.Count(); i++)
         {
-            _collection.Add(_testData.ElementAt(i * 3));
+            int index = i * 3;
+            _collection.Add(_testData.ElementAt(index));
         }
     }
 }

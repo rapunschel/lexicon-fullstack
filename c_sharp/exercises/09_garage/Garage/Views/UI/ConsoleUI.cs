@@ -66,8 +66,8 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 
             if (VehicleDetailsReaderUI.GetRecord(input, out VehicleDetails? details))
             {
-                if (_gvm.CreateVehicle(details))
-                    Display.SuccessMessage($"Created {GetVehicleTypeName()} successfully");
+                _gvm.CreateVehicle(details);
+                Display.SuccessMessage($"Created {GetVehicleTypeName()} successfully");
             }
         }
         catch (KeyNotFoundException ex)
@@ -76,7 +76,7 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
         }
         catch (Exception ex)
         {
-            Display.ErrorMessage(ex.Message);
+            Display.ErrorMessage(ex.Message); // Vehicle throws argumentException, caught here to display error
         }
         finally
         {
