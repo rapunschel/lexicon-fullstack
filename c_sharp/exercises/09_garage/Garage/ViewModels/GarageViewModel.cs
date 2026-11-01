@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using Garage.Models;
 using Garage.Models.Data;
+using Garage.Models.Enums;
 using Garage.Models.Interfaces;
 using Garage.Models.Records;
 using Garage.Models.Vehicles;
@@ -32,21 +34,21 @@ public class GarageViewModel<T> where T : class, IVehicle
         return true;
     }
 
-    public bool ParkVehicle(string registration)
+    public ParkResult ParkVehicle(string registration)
     {
+        T? vehicle = _createdVehicles.FirstOrDefault(item =>
+            string.Equals(item.RegNumber, registration, StringComparison.OrdinalIgnoreCase));
 
-        foreach (var item in _createdVehicles)
+        if (vehicle == null) return ParkResult.VehicleNotCreated;
+
+        var result = _collection.Add(vehicle);
+        return result switch
         {
-            if (string.Equals(item.RegNumber, registration, StringComparison.OrdinalIgnoreCase))
-            {
-                if (_collection.Add(item))
-                {
-                    return true;
-                }
-                break; // Can only ever be 1 registration in _createdVehicles
-            }
-        }
-        return false;
+            CollectionResult.Added => ParkResult.Parked,
+            CollectionResult.AtCapacity => ParkResult.AtCapacity,
+            CollectionResult.DuplicateRegistration => ParkResult.AlreadyParked,
+            _ => throw new InvalidOperationException($"Unexpected operation from Add: {result}")
+        };
     }
 
     public bool Search(VehicleDetails details, out IEnumerable<T> vehicles)

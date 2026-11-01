@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Garage.Models.Enums;
 using Garage.Models.Vehicles;
 using Garage.Utils;
 
@@ -32,17 +33,16 @@ public class GarageCollection<T> : IEnumerable<T>, IGarageCollection<T> where T 
         return (IEnumerable<T>)_storage.FindAll(item => matches(item)).ConvertAll(item => item.ShallowCopy());
     }
 
-    public bool Add(T item)
+    public CollectionResult Add(T item)
     {
-        if (_storage.Count >= _capacity) return false;
-
         if (FindVehicle(item.RegNumber, out IVehicle? _))
-        {
-            return false;
-        }
+            return CollectionResult.DuplicateRegistration;
+
+        if (_storage.Count >= _capacity) return CollectionResult.AtCapacity;
+
 
         _storage.Add(item);
-        return true;
+        return CollectionResult.Added;
     }
 
     public bool Remove(string regNumber)

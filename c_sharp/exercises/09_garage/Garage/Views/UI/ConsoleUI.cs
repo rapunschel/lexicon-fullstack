@@ -8,6 +8,7 @@ using System.Text;
 using System.Linq;
 using Garage.Views.Utilities;
 using Garage.Models.Utilities;
+using Garage.Models.Enums;
 
 namespace Garage.Views.UI;
 
@@ -39,6 +40,11 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
         Display.WaitThenClear();
     }
 
+    private string GetVehicleTypeName()
+    {
+        HashSet<string> typeSet = [.. AssemblyScanner.FindConcreteSubtypesOfT(typeof(T)).Select(type => type.Name)];
+        return typeSet.FirstOrDefault(type => type == typeof(T).Name) ?? "vehicle";
+    }
 
 
     public void CreateVehicleView()
@@ -56,14 +62,14 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 
             if (!isValid)
             {
-                Display.ErrorMessage(error: "Not a valid vehicle type");
+                Display.ErrorMessage(error: $"Not a valid vehicle type");
                 return;
             }
 
             if (VehicleDetailsReaderUI.GetRecord(input, out VehicleDetails? details))
             {
                 if (_gvm.CreateVehicle(details))
-                    Display.SuccessMessage("Successfully created vehicle");
+                    Display.SuccessMessage($"Created {GetVehicleTypeName()} successfully");
             }
         }
         catch (KeyNotFoundException ex)
@@ -91,17 +97,15 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 
     public void ParkedVehiclesView()
     {
-
         string output = _gvm.GetParkedCarsInfo();
-        if (output == null) Display.SuccessMessage("No garage is initiated");
+        if (output == null) Display.ErrorMessage("No garage is initiated");
         else Display.ShowTable(output, $"PARKED", shouldClearBefore: true, shouldClearAfter: true);
-
-
     }
+
     public void UnparkedVehiclesView()
     {
         string output = _gvm.GetNotParkedVehicles();
-        if (output == null) Display.SuccessMessage("No garage is initiated");
+        if (output == null) Display.ErrorMessage("No garage is initiated");
         else Display.ShowTable(output, $"UNPARKED", shouldClearBefore: true, shouldClearAfter: true);
     }
 
@@ -109,12 +113,42 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 
     public void ParkVehicleView()
     {
-        if (_gvm.ParkVehicle(InputReader.ReadString(query: "Park vehicle with registration:")))
+        try
         {
-            System.Console.WriteLine("Vehicle was parked.");
+            string input = InputReader.PromptUntilValid<string>(
+                tryRead: InputReader.ReadString,
+                showQuery: () => Display.ShowQuery($"Park vehicle with registration:"),
+                showError: () => Display.ErrorMessage(error: "Must enter something")
+            );
+
+            ParkResult result = _gvm.ParkVehicle(input);
+
+            switch (result)
+            {
+                case ParkResult.Parked:
+                    Display.SuccessMessage($"{GetVehicleTypeName()} was parked.");
+                    break;
+                case ParkResult.AlreadyParked:
+                    Display.ErrorMessage($"{GetVehicleTypeName()} is already parked.");
+                    break;
+                case ParkResult.AtCapacity:
+                    Display.ErrorMessage("Garage is full");
+                    break;
+                case ParkResult.VehicleNotCreated:
+                    Display.ErrorMessage($"Must first create a {GetVehicleTypeName()}");
+                    break;
+                default:
+                    throw new InvalidOperationException($"Unexpected result: {result}");
+            }
         }
-        else System.Console.WriteLine("Failed to park. Garage full or vehicle doesnt exist or already parked");
-        InputReader.WaitForUserKeyPress(_continueMessage);
+        catch (Exception ex)
+        {
+            Display.ErrorMessage(ex.Message);
+        }
+        finally
+        {
+            Display.WaitThenClear();
+        }
 
     }
 
