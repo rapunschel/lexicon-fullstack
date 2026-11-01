@@ -23,7 +23,7 @@ public static class VehicleDetailsReaderUI
     public static bool GetRecord(string type, [NotNullWhen(true)] out VehicleDetails? details)
     {
         details = null;
-        if (!dict.Keys.Contains(type.ToLower())) throw new KeyNotFoundException($"{type} was not available in the method dictionary");
+        if (!dict.Keys.Contains(type.ToLower())) throw new KeyNotFoundException($"{type} was not available in the dictionary");
 
         details = dict[type](GetCommonDetails());
 

@@ -67,7 +67,7 @@ public static class Display
     public static void ErrorMessage(string error)
     {
         Console.ForegroundColor = ConsoleColor.DarkRed;
-        Console.WriteLine($"Error: {error}");
+        Console.WriteLine(error);
         Console.ResetColor();
     }
 

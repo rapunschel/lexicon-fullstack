@@ -43,13 +43,14 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 
     public void CreateVehicleView()
     {
+        string input = "";
         try
         {
             HashSet<string> typeSet = [.. AssemblyScanner.FindConcreteSubtypesOfT(typeof(T)).Select(type => type.Name)];
-            string input = InputReader.PromptUntilValid<string>(
-                tryRead: InputReader.ReadString,
-                showQuery: () => Display.ShowQuery($"Do you want to create: {string.Join(", ", typeSet)}?"),
-                showError: () => Display.ErrorMessage(error: "Must enter something"));
+            input = InputReader.PromptUntilValid<string>(
+               tryRead: InputReader.ReadString,
+               showQuery: () => Display.ShowQuery($"Do you want to create: {string.Join(", ", typeSet)}?"),
+               showError: () => Display.ErrorMessage(error: "Must enter something"));
 
             bool isValid = typeSet.FirstOrDefault(type => string.Equals(type, input, StringComparison.OrdinalIgnoreCase)) != null;
 
@@ -61,16 +62,13 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 
             if (VehicleDetailsReaderUI.GetRecord(input, out VehicleDetails? details))
             {
-
                 if (_gvm.CreateVehicle(details))
-                {
                     Display.SuccessMessage("Successfully created vehicle");
-                }
-                else
-                {
-                    Display.ErrorMessage($"Failed to create vehicle. Unexpected problem");
-                }
             }
+        }
+        catch (KeyNotFoundException ex)
+        {
+            Display.ErrorMessage($"Failed to get details for {input}. Error: {ex.Message}");
         }
         catch (Exception ex)
         {
