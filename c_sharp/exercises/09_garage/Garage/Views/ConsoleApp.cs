@@ -23,7 +23,6 @@ public class ConsoleApp
         InitTestData = 8
     }
 
-    private const string _continueMessage = "Press any key to continue...";
     public void Run()
     {
         const string headMenuMessage = "Welcome to the Garage";
@@ -38,33 +37,33 @@ public class ConsoleApp
                          "8: Creates vehicles and populates garage with a few vehicles if it has available spaces";
 
 
-
-
-        const string invalidCmdMessage = "Invalid command";
         System.Console.WriteLine(headMenuMessage);
 
-        int capacity = InputReader.ReadPositiveInt(query: "How many parking spaces?");
+        int capacity = InputReader.PromptUntilValid<int>(
+            tryRead: InputReader.ReadPositiveInt,
+            showQuery: () => Display.ShowQuery($"How many parking spaces:"),
+            showError: () => Display.ErrorMessage(error: "Must enter something")
+        );
+
+
         GarageViewModel<IVehicle> _gvm = new GarageViewModel<IVehicle>(factory: new VehicleFactory(), capacity: capacity);
         System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
-        InputReader.WaitForUserKeyPress(_continueMessage);
+        Display.WaitForKeyPressMessage();
         IUI<IVehicle> ui = new ConsoleUI<IVehicle>(gvm: _gvm);
 
         bool isRunning = true;
         while (isRunning)
         {
-
-
             System.Console.WriteLine("========================================");
             System.Console.WriteLine(menuCmdsMessage);
             System.Console.WriteLine("========================================");
 
             if (!int.TryParse(Console.ReadLine(), out int command))
             {
-                Display.ErrorMessage(invalidCmdMessage);
+                Display.ErrorMessage("Not a valid command");
                 Display.WaitThenClear();
                 continue;
             }
-
 
             switch ((Command)command)
             {
