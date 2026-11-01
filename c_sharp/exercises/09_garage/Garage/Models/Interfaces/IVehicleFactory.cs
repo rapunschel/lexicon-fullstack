@@ -5,5 +5,7 @@ namespace Garage.Models.Interfaces;
 
 public interface IVehicleFactory<out T> where T : IVehicle
 {
+    // public static T Instance { get; };
+
     public T Create(VehicleDetails details);
 }

@@ -34,7 +34,7 @@ public class ConsoleApp
         );
 
 
-        GarageViewModel<IVehicle> _gvm = new GarageViewModel<IVehicle>(factory: new VehicleFactory(), capacity: capacity);
+        GarageViewModel<IVehicle> _gvm = new GarageViewModel<IVehicle>(factory: VehicleFactory.Instance, capacity: capacity);
         System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
         Display.WaitForKeyPressMessage();
         IUI<IVehicle> ui = new ConsoleUI<IVehicle>(gvm: _gvm);

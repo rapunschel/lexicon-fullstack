@@ -7,50 +7,30 @@ namespace Garage.Models.Factories;
 
 public sealed class VehicleFactory : IVehicleFactory<IVehicle>
 {
+
+    public static VehicleFactory Instance { get; } = new();
+
+    private VehicleFactory() { }
+
     public IVehicle Create(VehicleDetails vehicleDetails)
     {
 
         switch (vehicleDetails)
         {
             case CarDetails carDetails:
-                return new Car(
-                    brand: carDetails.Brand,
-                    regNumber: carDetails.Registration,
-                    color: carDetails.Color,
-                    wheelCount: carDetails.WheelCount,
-                    engineCount: carDetails.EngineCount);
+                return CarFactory.Instance.Create(carDetails);
 
             case BusDetails busDetails:
-                return new Bus(
-                    brand: busDetails.Brand,
-                    regNumber: busDetails.Registration,
-                    color: busDetails.Color,
-                    wheelCount: busDetails.WheelCount,
-                    length: busDetails.Length);
+                return BusFactory.Instance.Create(busDetails);
 
             case MotorcycleDetails motorcycleDetails:
-                return new Motorcycle(
-                    brand: motorcycleDetails.Brand,
-                    regNumber: motorcycleDetails.Registration,
-                    color: motorcycleDetails.Color,
-                    wheelCount: motorcycleDetails.WheelCount,
-                    motorcycleDetails.Seats);
+                return MotorcycleFactory.Instance.Create(motorcycleDetails);
 
             case BoatDetails boatDetails:
-                return new Boat(
-                    brand: boatDetails.Brand,
-                    regNumber: boatDetails.Registration,
-                    color: boatDetails.Color,
-                    wheelCount: boatDetails.WheelCount,
-                    boatDetails.Fuel);
+                return BoatFactory.Instance.Create(boatDetails);
 
             case AirplaneDetails airplaneDetails:
-                return new Airplane(
-                    brand: airplaneDetails.Brand,
-                    regNumber: airplaneDetails.Registration,
-                    color: airplaneDetails.Color,
-                    wheelCount: airplaneDetails.WheelCount,
-                    airplaneDetails.Speed);
+                return AirplaneFactory.Instance.Create(airplaneDetails);
 
             default:
                 throw new ArgumentException(

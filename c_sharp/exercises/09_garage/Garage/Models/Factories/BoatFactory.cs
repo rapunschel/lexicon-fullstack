@@ -7,8 +7,20 @@ using Garage.Models.Records;
 
 public sealed class BoatFactory : IVehicleFactory<Boat>
 {
+    public static BoatFactory Instance { get; } = new();
+
+    private BoatFactory() { }
+
     public Boat Create(VehicleDetails details)
     {
-        throw new NotImplementedException();
+        if (details is not BoatDetails boatDetails)
+            throw new ArgumentException("BoatFactory requires BoatDetails.", nameof(details));
+
+        return new Boat(
+            brand: boatDetails.Brand,
+            regNumber: boatDetails.Registration,
+            color: boatDetails.Color,
+            wheelCount: boatDetails.WheelCount,
+            fuel: boatDetails.Fuel);
     }
 }
