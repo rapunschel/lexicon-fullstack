@@ -57,9 +57,15 @@ public class GarageViewModel<T> where T : class, IVehicle
         return true;
     }
 
-    public bool RemoveParkedVehicle(string registration)
+    public ParkResult RemoveParkedVehicle(string registration)
     {
-        return _collection.Remove(registration);
+        var result = _collection.Remove(registration);
+        return result switch
+        {
+            CollectionResult.Removed => ParkResult.Unparked,
+            CollectionResult.NotFound => ParkResult.NotParked,
+            _ => throw new InvalidOperationException($"Unexpected operation: {result}")
+        };
     }
 
 

@@ -16,7 +16,6 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
 {
 
     private GarageViewModel<T> _gvm;
-    private const string _continueMessage = "Press any key to continue...";
 
     public ConsoleUI(GarageViewModel<T> gvm)
     {
@@ -45,7 +44,6 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
         HashSet<string> typeSet = [.. AssemblyScanner.FindConcreteSubtypesOfT(typeof(T)).Select(type => type.Name)];
         return typeSet.FirstOrDefault(type => type == typeof(T).Name) ?? "vehicle";
     }
-
 
     public void CreateVehicleView()
     {
@@ -108,8 +106,6 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
         if (output == null) Display.ErrorMessage("No garage is initiated");
         else Display.ShowTable(output, $"UNPARKED", shouldClearBefore: true, shouldClearAfter: true);
     }
-
-
 
     public void ParkVehicleView()
     {
@@ -180,19 +176,37 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
         }
     }
 
-
-
     public void UnparkVehicleView()
     {
-        if (_gvm.RemoveParkedVehicle(InputReader.ReadString(query: "Remove vehicle from garage with registration:")))
+        try
         {
-            System.Console.WriteLine("Vehicle was taken out of garage.");
+            string input = InputReader.PromptUntilValid<string>(
+                tryRead: InputReader.ReadString,
+                showQuery: () => Display.ShowQuery($"Unpark vehicle with registration:"),
+                showError: () => Display.ErrorMessage(error: "Must enter something")
+            );
+            ParkResult result = _gvm.RemoveParkedVehicle(input);
+
+            switch (result)
+            {
+                case ParkResult.Unparked:
+                    Display.SuccessMessage($"{GetVehicleTypeName()} was unparked.");
+                    break;
+                case ParkResult.NotParked:
+                    Display.ErrorMessage($"{GetVehicleTypeName()} was not found in the garage.");
+                    break;
+                default:
+                    throw new InvalidOperationException($"Unexpected result: {result}");
+            }
+
         }
-        else System.Console.WriteLine("Vehicle not found");
-        InputReader.WaitForUserKeyPress(_continueMessage);
-
+        catch (Exception ex)
+        {
+            Display.ErrorMessage(ex.Message);
+        }
+        finally
+        {
+            Display.WaitThenClear();
+        }
     }
-
-
-
 }

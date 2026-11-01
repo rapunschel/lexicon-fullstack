@@ -8,7 +8,7 @@ namespace Garage.Models;
 public interface IGarageCollection<T>
 {
     public CollectionResult Add(T item);
-    public bool Remove(string regNumber);
+    public CollectionResult Remove(string regNumber);
     public IEnumerable<T> Search(Func<T, bool> matches);
 
     public string ToString();

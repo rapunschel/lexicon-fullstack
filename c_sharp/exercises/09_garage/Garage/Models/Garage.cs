@@ -45,14 +45,14 @@ public class GarageCollection<T> : IEnumerable<T>, IGarageCollection<T> where T 
         return CollectionResult.Added;
     }
 
-    public bool Remove(string regNumber)
+    public CollectionResult Remove(string regNumber)
     {
         if (FindVehicle(regNumber, out IVehicle? vehicle))
         {
             _storage.Remove((T)vehicle);
-            return true;
+            return CollectionResult.Removed;
         }
-        return false;
+        return CollectionResult.NotFound;
     }
     private bool FindVehicle(string regNumber, [NotNullWhen(true)] out IVehicle? vehicle)
     {
