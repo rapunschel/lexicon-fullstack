@@ -98,10 +98,11 @@ public class GarageHandlerUI
                     catch (Exception ex)
                     {
                         Display.ErrorMessage(ex.Message);
-                        Display.WaitThenClear();
                     }
                     break;
             }
+            Display.WaitThenClear();
+
         }
     }
 

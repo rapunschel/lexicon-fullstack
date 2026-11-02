@@ -37,7 +37,7 @@ public static class Display
         Console.ResetColor();
 
     }
-    public static void ShowTable(string table, string desc, bool shouldClearBefore = true, bool shouldClearAfter = true)
+    public static void ShowTable(string table, string desc, bool shouldClearBefore = false, bool shouldClearAfter = false)
     {
         if (shouldClearBefore) Clear();
 

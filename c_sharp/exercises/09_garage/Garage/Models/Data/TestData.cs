@@ -56,7 +56,7 @@ public static class TestData<T> where T : IVehicle
             }
             catch
             {
-                System.Console.WriteLine("Skipping vehicle");
+                // Dont care, just continue
             }
         }
         return result.OfType<T>();

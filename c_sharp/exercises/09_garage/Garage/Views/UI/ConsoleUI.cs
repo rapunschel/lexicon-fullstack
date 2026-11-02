@@ -41,7 +41,6 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
             Display.SuccessMessage($"Created garage with {capacity} parking slots.");
         else Display.ErrorMessage("Unexpected error: creating garage.");
 
-        Display.WaitThenClear();
     }
 
     public string GetGarageStorageType()
@@ -83,10 +82,6 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
         {
             Display.ErrorMessage(ex.Message); // Vehicle throws argumentException, caught here to display error
         }
-        finally
-        {
-            Display.WaitThenClear();
-        }
     }
 
 
@@ -95,21 +90,20 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
         Display.Clear();
         _gvm.InitTestData();
         Display.SuccessMessage("Test data added");
-        Display.WaitThenClear();
     }
 
     public void ParkedVehiclesView()
     {
         string output = _gvm.GetParkedCarsInfo();
         if (output == null) Display.ErrorMessage("No garage is initiated");
-        else Display.ShowTable(output, $"PARKED", shouldClearBefore: true, shouldClearAfter: true);
+        else Display.ShowTable(output, $"PARKED", shouldClearBefore: true);
     }
 
     public void UnparkedVehiclesView()
     {
         string output = _gvm.GetNotParkedVehicles();
         if (output == null) Display.ErrorMessage("No garage is initiated");
-        else Display.ShowTable(output, $"UNPARKED", shouldClearBefore: true, shouldClearAfter: true);
+        else Display.ShowTable(output, $"UNPARKED", shouldClearBefore: true);
     }
 
     public void ParkVehicleView()
@@ -146,11 +140,6 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
         {
             Display.ErrorMessage(ex.Message);
         }
-        finally
-        {
-            Display.WaitThenClear();
-        }
-
     }
 
     public void SearchView()
@@ -174,10 +163,6 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
         catch (Exception ex)
         {
             Display.ErrorMessage(ex.Message);
-        }
-        finally
-        {
-            Display.WaitThenClear();
         }
     }
 
@@ -209,9 +194,6 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
         {
             Display.ErrorMessage(ex.Message);
         }
-        finally
-        {
-            Display.WaitThenClear();
-        }
+
     }
 }

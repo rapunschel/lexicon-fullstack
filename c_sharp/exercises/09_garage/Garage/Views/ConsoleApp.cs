@@ -1,8 +1,4 @@
 using System;
-using Garage.Models.Vehicles;
-using Garage.ViewModels;
-using Garage.Models.Factories;
-using Garage.Models.Interfaces;
 using Garage.Views.UI;
 using Garage.Views.Utilities;
 using System.Text;
@@ -50,11 +46,14 @@ public class ConsoleApp
                     return;
                 case Command.CreateGarage:
                     handler.CreateGarageView();
+                    Display.WaitThenClear();
                     break;
                 case Command.ViewGarage:
                     handler.ViewGarageMenu();
+                    Display.WaitThenClear();
                     break;
             }
+
 
         }
 
