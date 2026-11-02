@@ -3,8 +3,9 @@ using Garage.Models.Vehicles;
 
 namespace Garage.Models.Interfaces;
 
-public interface IUI<T>
+public interface IUI
 {
+    public string Name { get; }
     public void CreateGarageView();
     public void CreateVehicleView();
     public void ParkVehicleView();
@@ -13,4 +14,5 @@ public interface IUI<T>
     public void ParkedVehiclesView();
     public void UnparkedVehiclesView();
     public void InitTestData();
+    public string GetGarageStorageType();
 }

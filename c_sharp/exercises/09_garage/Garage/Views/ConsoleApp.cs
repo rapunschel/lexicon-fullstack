@@ -5,6 +5,8 @@ using Garage.Models.Factories;
 using Garage.Models.Interfaces;
 using Garage.Views.UI;
 using Garage.Views.Utilities;
+using System.Text;
+using System.Linq;
 
 namespace Garage.Views;
 
@@ -14,40 +16,28 @@ public class ConsoleApp
     {
         Exit = 0,
         CreateGarage = 1,
-        CreateVehicle = 2,
-        ParkVehicle = 3,
-        Search = 4,
-        UnparkVehicle = 5,
-        ShowParked = 6,
-        ShowNotParked = 7,
-        InitTestData = 8
+        ViewGarage = 2,
     }
 
     public void Run()
     {
 
-
-        int capacity = InputReader.PromptUntilValid<int>(
-            tryRead: InputReader.ReadPositiveInt,
-            showQuery: () => Display.ShowQuery($"How many parking spaces:"),
-            showError: () => Display.ErrorMessage(error: "Must enter something")
-        );
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine("0: Exit");
+        sb.AppendLine($"{(int)Command.CreateGarage}: Create a garage");
+        sb.Append($"{(int)Command.ViewGarage}: View garage");
 
 
-        GarageViewModel<IVehicle> _gvm = new GarageViewModel<IVehicle>(factory: VehicleFactory.Instance, capacity: capacity);
-        System.Console.WriteLine($"Created garage with {capacity} parking slots.\n");
-        Display.WaitForKeyPressMessage();
-        IUI<IVehicle> ui = new ConsoleUI<IVehicle>(gvm: _gvm);
 
+        GarageHandlerUI handler = new();
 
-        bool isRunning = true;
-        while (isRunning)
+        while (true)
         {
             Display.Clear();
-            Display.ShowWelcomeMessage();
-            Display.ShowGarageCommands();
-
-            if (!int.TryParse(Console.ReadLine(), out int command))
+            Display.ShowCommands(sb.ToString());
+            if (!int.TryParse(Console.ReadLine(), out int command)
+                || command < 0
+                || command > Enum.GetValues<Command>().Max(command => (int)command))
             {
                 Display.ErrorMessage("Not a valid command");
                 Display.WaitThenClear();
@@ -57,43 +47,15 @@ public class ConsoleApp
             switch ((Command)command)
             {
                 case Command.Exit:
-                    isRunning = false;
-                    break;
+                    return;
                 case Command.CreateGarage:
-                    ui.CreateGarageView();
+                    handler.CreateGarageView();
                     break;
-                case Command.CreateVehicle:
-                    ui.CreateVehicleView();
-                    break;
-                case Command.ParkVehicle:
-                    ui.ParkVehicleView();
-                    break;
-                case Command.UnparkVehicle:
-                    ui.UnparkVehicleView();
-                    break;
-                case Command.Search:
-                    ui.SearchView();
-                    break;
-                case Command.ShowParked:
-                    ui.ParkedVehiclesView();
-                    break;
-                case Command.ShowNotParked:
-                    ui.UnparkedVehiclesView();
-
-                    break;
-                case Command.InitTestData:
-                    try
-                    {
-                        ui.InitTestData();
-
-                    }
-                    catch (Exception ex)
-                    {
-                        Display.ErrorMessage(ex.Message);
-                        Display.WaitThenClear();
-                    }
+                case Command.ViewGarage:
+                    handler.ViewGarageMenu();
                     break;
             }
+
         }
 
     }

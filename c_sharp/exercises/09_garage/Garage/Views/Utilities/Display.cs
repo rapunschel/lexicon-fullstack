@@ -19,28 +19,19 @@ public static class Display
     }
 
 
-    public static void ShowWelcomeMessage()
+    public static void ShowWelcomeMessage(string message)
     {
         Console.ForegroundColor = _menuTextColor;
-        const string menuMessage = "Welcome to the Garage";
-        System.Console.WriteLine(menuMessage);
+        System.Console.WriteLine(message);
         Console.ResetColor();
 
     }
-    public static void ShowGarageCommands()
+    public static void ShowCommands(string commands)
     {
-        const string menuCommands = "\n0: To exit program.\n" +
-                         "1: Create Garage (this will override existing garage).\n" +
-                         "2: Create vehicle.\n" +
-                         "3: Park vehicle in garage\n" +
-                         "4: Search vehicle in garage.\n" +
-                         "5: Take out vehicle from garage.\n" +
-                         "6: List all parked vehicles\n" +
-                         "7: List all unparked vehicles\n" +
-                         "8: Creates vehicles and populates garage with a few vehicles if it has available spaces";
+
         Console.ForegroundColor = _menuTextColor;
         System.Console.WriteLine(new string('=', Math.Abs(_offset)));
-        System.Console.WriteLine(menuCommands);
+        System.Console.WriteLine(commands);
         System.Console.WriteLine(new string('=', Math.Abs(_offset)));
 
         Console.ResetColor();

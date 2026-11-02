@@ -12,14 +12,19 @@ using Garage.Utils;
 
 namespace Garage.Views.UI;
 
-public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
+public class ConsoleUI<T> : IUI where T : class, IVehicle
 {
 
     private GarageViewModel<T> _gvm;
-
-    public ConsoleUI(GarageViewModel<T> gvm)
+    public string Name
+    {
+        get;
+        private set;
+    }
+    public ConsoleUI(GarageViewModel<T> gvm, string name)
     {
         _gvm = gvm;
+        Name = name;
     }
 
     public void CreateGarageView()
@@ -39,7 +44,7 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
         Display.WaitThenClear();
     }
 
-    private string GetVehicleTypeName()
+    public string GetGarageStorageType()
     {
         HashSet<string> typeSet = [.. AssemblyScanner.FindConcreteSubtypesOfT(typeof(T)).Select(type => type.Name)];
         return typeSet.FirstOrDefault(type => type == typeof(T).Name) ?? "vehicle";
@@ -67,7 +72,7 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
             if (VehicleDetailsReaderUI.GetRecord(input, out VehicleDetails? details))
             {
                 _gvm.CreateVehicle(details);
-                Display.SuccessMessage($"Created {GetVehicleTypeName()} successfully");
+                Display.SuccessMessage($"Created {GetGarageStorageType()} successfully");
             }
         }
         catch (KeyNotFoundException ex)
@@ -122,16 +127,16 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
             switch (result)
             {
                 case ParkResult.Parked:
-                    Display.SuccessMessage($"{GetVehicleTypeName()} was parked.");
+                    Display.SuccessMessage($"{GetGarageStorageType()} was parked.");
                     break;
                 case ParkResult.AlreadyParked:
-                    Display.ErrorMessage($"{GetVehicleTypeName()} is already parked.");
+                    Display.ErrorMessage($"{GetGarageStorageType()} is already parked.");
                     break;
                 case ParkResult.AtCapacity:
                     Display.ErrorMessage("Garage is full");
                     break;
                 case ParkResult.VehicleNotCreated:
-                    Display.ErrorMessage($"{GetVehicleTypeName()} with registration: {input} not found.");
+                    Display.ErrorMessage($"{GetGarageStorageType()} with registration: {input} not found.");
                     break;
                 default:
                     throw new InvalidOperationException($"Unexpected result: {result}");
@@ -168,7 +173,7 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
         }
         catch (Exception ex)
         {
-            System.Console.WriteLine(ex.Message);
+            Display.ErrorMessage(ex.Message);
         }
         finally
         {
@@ -190,10 +195,10 @@ public class ConsoleUI<T> : IUI<T> where T : class, IVehicle
             switch (result)
             {
                 case ParkResult.Unparked:
-                    Display.SuccessMessage($"{GetVehicleTypeName()} was unparked.");
+                    Display.SuccessMessage($"{GetGarageStorageType()} was unparked.");
                     break;
                 case ParkResult.NotParked:
-                    Display.ErrorMessage($"{GetVehicleTypeName()} was not found in the garage.");
+                    Display.ErrorMessage($"{GetGarageStorageType()} was not found in the garage.");
                     break;
                 default:
                     throw new InvalidOperationException($"Unexpected result: {result}");
