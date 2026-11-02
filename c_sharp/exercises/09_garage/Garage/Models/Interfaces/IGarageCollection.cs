@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Garage.Models.Enums;
-using Garage.Models.Vehicles;
 
 namespace Garage.Models;
 

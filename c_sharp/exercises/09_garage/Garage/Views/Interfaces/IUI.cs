@@ -1,5 +1,3 @@
-using System;
-using Garage.Models.Vehicles;
 
 namespace Garage.Models.Interfaces;
 

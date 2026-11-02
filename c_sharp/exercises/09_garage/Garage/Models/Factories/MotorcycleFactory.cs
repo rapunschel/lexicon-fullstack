@@ -1,9 +1,8 @@
 using System;
 using Garage.Models.Vehicles;
-namespace Garage.Models.Factories;
-
 using Garage.Models.Interfaces;
 using Garage.Models.Records;
+namespace Garage.Models.Factories;
 
 public sealed class MotorcycleFactory : IVehicleFactory<Motorcycle>
 {
