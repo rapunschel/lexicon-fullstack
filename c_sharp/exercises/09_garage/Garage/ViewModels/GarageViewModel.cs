@@ -16,7 +16,6 @@ public class GarageViewModel<T> where T : class, IVehicle
 {
 
     private IGarageCollection<T> _collection;
-    private IEnumerable<T>? _testData;
     private IVehicleFactory<T> _factory;
     public GarageViewModel(IVehicleFactory<T> factory, int capacity)
     {
@@ -83,8 +82,7 @@ public class GarageViewModel<T> where T : class, IVehicle
 
     public void InitTestData()
     {
-        if (_testData is null)
-            _testData = TestData<T>.GetTestData();
+        IEnumerable<T> _testData = TestData.GetTestData().OfType<T>();
 
         for (int i = 0; i * 4 < _testData.Count(); i++)
         {

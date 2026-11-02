@@ -46,11 +46,9 @@ public class ConsoleApp
                     return;
                 case Command.CreateGarage:
                     handler.CreateGarageView();
-                    Display.WaitThenClear();
                     break;
                 case Command.ViewGarage:
                     handler.ViewGarageMenu();
-                    Display.WaitThenClear();
                     break;
             }
 

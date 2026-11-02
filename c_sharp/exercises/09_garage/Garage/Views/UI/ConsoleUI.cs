@@ -16,6 +16,7 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
 {
 
     private GarageViewModel<T> _gvm;
+
     public string Name
     {
         get;
@@ -41,6 +42,9 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
             Display.SuccessMessage($"Created garage with {capacity} parking slots.");
         else Display.ErrorMessage("Unexpected error: creating garage.");
 
+        Display.WaitThenClear();
+
+
     }
 
     public string GetGarageStorageType()
@@ -64,14 +68,14 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
 
             if (!isValid)
             {
-                Display.ErrorMessage(error: $"Not a valid vehicle type");
+                Display.ErrorMessage(error: $"Not a valid {GetGarageStorageType().ToLower()} type");
                 return;
             }
 
             if (VehicleDetailsReaderUI.GetRecord(input, out VehicleDetails? details))
             {
                 _gvm.CreateVehicle(details);
-                Display.SuccessMessage($"Created {GetGarageStorageType()} successfully");
+                Display.SuccessMessage($"Created {GetGarageStorageType().ToLower()} successfully");
             }
         }
         catch (KeyNotFoundException ex)
@@ -82,6 +86,11 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
         {
             Display.ErrorMessage(ex.Message); // Vehicle throws argumentException, caught here to display error
         }
+        finally
+        {
+            Display.WaitThenClear();
+
+        }
     }
 
 
@@ -90,6 +99,7 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
         Display.Clear();
         _gvm.InitTestData();
         Display.SuccessMessage("Test data added");
+        Display.WaitThenClear();
     }
 
     public void ParkedVehiclesView()
@@ -97,6 +107,7 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
         string output = _gvm.GetParkedCarsInfo();
         if (output == null) Display.ErrorMessage("No garage is initiated");
         else Display.ShowTable(output, $"PARKED", shouldClearBefore: true);
+        Display.WaitThenClear();
     }
 
     public void UnparkedVehiclesView()
@@ -104,6 +115,8 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
         string output = _gvm.GetNotParkedVehicles();
         if (output == null) Display.ErrorMessage("No garage is initiated");
         else Display.ShowTable(output, $"UNPARKED", shouldClearBefore: true);
+        Display.WaitThenClear();
+
     }
 
     public void ParkVehicleView()
@@ -112,7 +125,7 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
         {
             string input = InputReader.PromptUntilValid<string>(
                 tryRead: InputReader.ReadString,
-                showQuery: () => Display.ShowQuery($"Park vehicle with registration:"),
+                showQuery: () => Display.ShowQuery($"Park {GetGarageStorageType().ToLower()}  with registration:"),
                 showError: () => Display.ErrorMessage(error: "Must enter something")
             );
 
@@ -121,16 +134,16 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
             switch (result)
             {
                 case ParkResult.Parked:
-                    Display.SuccessMessage($"{GetGarageStorageType()} was parked.");
+                    Display.SuccessMessage($"{GetGarageStorageType().ToLower()} was parked.");
                     break;
                 case ParkResult.AlreadyParked:
-                    Display.ErrorMessage($"{GetGarageStorageType()} is already parked.");
+                    Display.ErrorMessage($"{GetGarageStorageType().ToLower()} is already parked.");
                     break;
                 case ParkResult.AtCapacity:
                     Display.ErrorMessage("Garage is full");
                     break;
                 case ParkResult.VehicleNotCreated:
-                    Display.ErrorMessage($"{GetGarageStorageType()} with registration: {input} not found.");
+                    Display.ErrorMessage($"{GetGarageStorageType().ToLower()} with registration: {input} not found.");
                     break;
                 default:
                     throw new InvalidOperationException($"Unexpected result: {result}");
@@ -139,6 +152,11 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
         catch (Exception ex)
         {
             Display.ErrorMessage(ex.Message);
+        }
+        finally
+        {
+            Display.WaitThenClear();
+
         }
     }
 
@@ -164,6 +182,11 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
         {
             Display.ErrorMessage(ex.Message);
         }
+        finally
+        {
+            Display.WaitThenClear();
+
+        }
     }
 
     public void UnparkVehicleView()
@@ -172,7 +195,7 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
         {
             string input = InputReader.PromptUntilValid<string>(
                 tryRead: InputReader.ReadString,
-                showQuery: () => Display.ShowQuery($"Unpark vehicle with registration:"),
+                showQuery: () => Display.ShowQuery($"Unpark {GetGarageStorageType().ToLower()}  with registration:"),
                 showError: () => Display.ErrorMessage(error: "Must enter something")
             );
             ParkResult result = _gvm.RemoveParkedVehicle(input);
@@ -180,10 +203,10 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
             switch (result)
             {
                 case ParkResult.Unparked:
-                    Display.SuccessMessage($"{GetGarageStorageType()} was unparked.");
+                    Display.SuccessMessage($"{GetGarageStorageType().ToLower()} was unparked.");
                     break;
                 case ParkResult.NotParked:
-                    Display.ErrorMessage($"{GetGarageStorageType()} was not found in the garage.");
+                    Display.ErrorMessage($"{GetGarageStorageType().ToLower()} was not found in the garage.");
                     break;
                 default:
                     throw new InvalidOperationException($"Unexpected result: {result}");
@@ -193,6 +216,11 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
         catch (Exception ex)
         {
             Display.ErrorMessage(ex.Message);
+        }
+        finally
+        {
+            Display.WaitThenClear();
+
         }
 
     }

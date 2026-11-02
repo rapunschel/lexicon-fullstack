@@ -6,10 +6,11 @@ using Garage.Models.Vehicles;
 
 namespace Garage.Models.Data;
 
-public static class TestData<T> where T : IVehicle
+public static class TestData
 {
-
-    public static IEnumerable<T> GetTestData()
+    private static bool IsInitialized = false;
+    private static List<IVehicle> _testData = [];
+    public static IEnumerable<IVehicle> GetTestData()
     {
         Func<IVehicle>[] testData =
         {
@@ -44,13 +45,12 @@ public static class TestData<T> where T : IVehicle
             () => new Motorcycle("Suzuki", "MOT105", "Black", 2, 1)
         };
 
-        List<IVehicle> result = [];
         foreach (var createVehicle in testData)
         {
             try
             {
                 var v = createVehicle();
-                result.Add(v);
+                _testData.Add(v);
                 VehicleRegister.Add(v);
 
             }
@@ -59,6 +59,8 @@ public static class TestData<T> where T : IVehicle
                 // Dont care, just continue
             }
         }
-        return result.OfType<T>();
+        IsInitialized = true;
+
+        return _testData;
     }
 }

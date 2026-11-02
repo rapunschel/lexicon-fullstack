@@ -14,7 +14,7 @@ public class GarageHandlerUI
 {
     private enum Command
     {
-        Exit = 0,
+        Back = 0,
         CreateGarage = 1,
         CreateVehicle = 2,
         ParkVehicle = 3,
@@ -39,20 +39,20 @@ public class GarageHandlerUI
 
 
         StringBuilder commands = new StringBuilder();
-        commands.AppendLine($"{(int)Command.Exit}: Back.");
-        commands.AppendLine($"{(int)Command.CreateGarage}: Create Garage (this will override existing garage).");
-        commands.AppendLine($"{(int)Command.CreateVehicle}: Create {_selectedGarage.GetGarageStorageType()}.");
-        commands.AppendLine($"{(int)Command.ParkVehicle}: Park {_selectedGarage.GetGarageStorageType()} in garage.");
-        commands.AppendLine($"{(int)Command.Search}: Search {_selectedGarage.GetGarageStorageType()} in garage.");
-        commands.AppendLine($"{(int)Command.UnparkVehicle}: Take out {_selectedGarage.GetGarageStorageType()} from garage.");
-        commands.AppendLine($"{(int)Command.ShowParked}: List all parked {_selectedGarage.GetGarageStorageType()}.");
-        commands.AppendLine($"{(int)Command.ShowNotParked}: List all created {_selectedGarage.GetGarageStorageType()}.");
-        commands.Append($"{(int)Command.InitTestData}: Create {_selectedGarage.GetGarageStorageType()} and populate the garage if spaces are available.");
+        commands.AppendLine($"{(int)Command.Back}: Back.");
+        commands.AppendLine($"{(int)Command.CreateGarage}: Reset all parked.");
+        commands.AppendLine($"{(int)Command.CreateVehicle}: Create {_selectedGarage.GetGarageStorageType().ToLower()}.");
+        commands.AppendLine($"{(int)Command.ParkVehicle}: Park {_selectedGarage.GetGarageStorageType().ToLower()} in garage.");
+        commands.AppendLine($"{(int)Command.Search}: Search {_selectedGarage.GetGarageStorageType().ToLower()} in garage.");
+        commands.AppendLine($"{(int)Command.UnparkVehicle}: Take out {_selectedGarage.GetGarageStorageType().ToLower()} from garage.");
+        commands.AppendLine($"{(int)Command.ShowParked}: List all parked {_selectedGarage.GetGarageStorageType().ToLower()}.");
+        commands.AppendLine($"{(int)Command.ShowNotParked}: List all created {_selectedGarage.GetGarageStorageType().ToLower()}.");
+        commands.Append($"{(int)Command.InitTestData}: Create {_selectedGarage.GetGarageStorageType().ToLower()} and populate the garage if spaces are available.");
 
         while (true)
         {
-
             Display.Clear();
+
             Display.ShowWelcomeMessage($"Welcome to my garage: {_selectedGarage.Name}");
             Display.ShowCommands(commands.ToString());
 
@@ -65,7 +65,7 @@ public class GarageHandlerUI
 
             switch ((Command)command)
             {
-                case Command.Exit:
+                case Command.Back:
                     return;
                 case Command.CreateGarage:
                     _selectedGarage.CreateGarageView();
@@ -101,8 +101,6 @@ public class GarageHandlerUI
                     }
                     break;
             }
-            Display.WaitThenClear();
-
         }
     }
 
@@ -155,6 +153,9 @@ public class GarageHandlerUI
             _garageList.Add(createGarage(capacity, name));
             Display.SuccessMessage($"Created garage with name {name} and capacity: {capacity}");
         }
+
+        Display.WaitThenClear();
+
     }
 
     public void ViewGarageMenu()
@@ -162,6 +163,7 @@ public class GarageHandlerUI
         if (_garageList.Count == 0)
         {
             Display.ErrorMessage("Must first create a garage");
+            Display.WaitThenClear();
             return;
         }
 
@@ -180,6 +182,8 @@ public class GarageHandlerUI
 
         while (true)
         {
+            Display.Clear();
+
             Display.ShowCommands(sb.ToString());
             if (!int.TryParse(Console.ReadLine(), out int value))
             {
@@ -194,8 +198,9 @@ public class GarageHandlerUI
                 Run();
                 return;
             }
-
             Display.ErrorMessage($"Input must be in range: {0} to {_garageList.Count}");
+            Display.WaitThenClear();
+
         }
     }
 }
