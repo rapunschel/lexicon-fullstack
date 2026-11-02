@@ -64,10 +64,7 @@ public class GarageCollection<T> : IEnumerable<T>, IGarageCollection<T> where T 
     public override string ToString()
     {
         string emptySlotsMsg = $"empty parking slots: {_capacity - _storage.Count}";
-        if (_storage.Count == 0)
-        {
-            return emptySlotsMsg;
-        }
+
         StringBuilder sb = TableFormatter<T>.FormatTable(_storage);
         sb.Append(emptySlotsMsg);
 
