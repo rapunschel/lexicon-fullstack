@@ -12,7 +12,7 @@ using Garage.Utils;
 
 namespace Garage.Views.UI;
 
-public class ConsoleUI<T> : IUI where T : class, IVehicle
+public class GarageUI<T> : IUI where T : class, IVehicle
 {
 
     private GarageViewModel<T> _gvm;
@@ -22,7 +22,7 @@ public class ConsoleUI<T> : IUI where T : class, IVehicle
         get;
         private set;
     }
-    public ConsoleUI(GarageViewModel<T> gvm, string name)
+    public GarageUI(GarageViewModel<T> gvm, string name)
     {
         _gvm = gvm;
         Name = name;

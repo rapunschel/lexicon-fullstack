@@ -40,7 +40,7 @@ public class GarageHandlerUI
 
         StringBuilder commands = new StringBuilder();
         commands.AppendLine($"{(int)Command.Back}: Back.");
-        commands.AppendLine($"{(int)Command.CreateGarage}: Reset all parked.");
+        commands.AppendLine($"{(int)Command.CreateGarage}: Remove all parked.");
         commands.AppendLine($"{(int)Command.CreateVehicle}: Create {_selectedGarage.GetGarageStorageType().ToLower()}.");
         commands.AppendLine($"{(int)Command.ParkVehicle}: Park {_selectedGarage.GetGarageStorageType().ToLower()} in garage.");
         commands.AppendLine($"{(int)Command.Search}: Search {_selectedGarage.GetGarageStorageType().ToLower()} in garage.");
@@ -112,12 +112,12 @@ public class GarageHandlerUI
 
         Dictionary<Type, Func<int, string, IUI>> _creators = new()
         {
-            [typeof(Car)] = (capacity, name) => new ConsoleUI<Car>(new GarageViewModel<Car>(factory: CarFactory.Instance, capacity: capacity), name),
-            [typeof(Boat)] = (capacity, name) => new ConsoleUI<Boat>(new GarageViewModel<Boat>(BoatFactory.Instance, capacity), name),
-            [typeof(Motorcycle)] = (capacity, name) => new ConsoleUI<Motorcycle>(new GarageViewModel<Motorcycle>(MotorcycleFactory.Instance, capacity), name),
-            [typeof(Airplane)] = (capacity, name) => new ConsoleUI<Airplane>(new GarageViewModel<Airplane>(AirplaneFactory.Instance, capacity), name),
-            [typeof(Bus)] = (capacity, name) => new ConsoleUI<Bus>(new GarageViewModel<Bus>(BusFactory.Instance, capacity), name),
-            [typeof(IVehicle)] = (capacity, name) => new ConsoleUI<IVehicle>(new GarageViewModel<IVehicle>(VehicleFactory.Instance, capacity), name)
+            [typeof(Car)] = (capacity, name) => new GarageUI<Car>(new GarageViewModel<Car>(factory: CarFactory.Instance, capacity: capacity), name),
+            [typeof(Boat)] = (capacity, name) => new GarageUI<Boat>(new GarageViewModel<Boat>(BoatFactory.Instance, capacity), name),
+            [typeof(Motorcycle)] = (capacity, name) => new GarageUI<Motorcycle>(new GarageViewModel<Motorcycle>(MotorcycleFactory.Instance, capacity), name),
+            [typeof(Airplane)] = (capacity, name) => new GarageUI<Airplane>(new GarageViewModel<Airplane>(AirplaneFactory.Instance, capacity), name),
+            [typeof(Bus)] = (capacity, name) => new GarageUI<Bus>(new GarageViewModel<Bus>(BusFactory.Instance, capacity), name),
+            [typeof(IVehicle)] = (capacity, name) => new GarageUI<IVehicle>(new GarageViewModel<IVehicle>(VehicleFactory.Instance, capacity), name)
 
         };
         dynamic type = InputReader.PromptUntilValid<Type>(
@@ -136,17 +136,19 @@ public class GarageHandlerUI
             showError: () => Display.ErrorMessage(error: "Unsupported vehicle")
         );
 
+        string name = InputReader.PromptUntilValid<string>(
+            tryRead: InputReader.ReadString,
+            showQuery: () => Display.ShowQuery($"Enter garage name:"),
+            showError: () => Display.ErrorMessage(error: "Must enter something")
+        );
+
         int capacity = InputReader.PromptUntilValid<int>(
             tryRead: InputReader.ReadPositiveInt,
             showQuery: () => Display.ShowQuery($"How many parking spaces:"),
             showError: () => Display.ErrorMessage(error: "Must enter something")
         );
 
-        string name = InputReader.PromptUntilValid<string>(
-            tryRead: InputReader.ReadString,
-            showQuery: () => Display.ShowQuery($"Enter garage name:"),
-            showError: () => Display.ErrorMessage(error: "Must enter something")
-        );
+
 
         if (_creators.TryGetValue(type, out Func<int, string, IUI> createGarage))
         {
