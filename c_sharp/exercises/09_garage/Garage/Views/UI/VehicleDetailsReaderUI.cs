@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO.Pipelines;
+using Garage.Models;
 using Garage.Models.Records;
 using Garage.Models.Vehicles;
 using Garage.ViewModels;
@@ -174,7 +176,19 @@ public static class VehicleDetailsReaderUI
 
                 if (int.TryParse(strings[3].Trim(), out int wheelCount))
                 {
-                    return new VehicleDetails(Brand: strings[0].Trim(), Registration: strings[1].Trim(), Color: strings[2].Trim(), WheelCount: wheelCount);
+                    string reg = strings[1].Trim();
+                    if (!VehicleRegister.IsValidRegNumber(reg) || !VehicleRegister.IsUnique(reg))
+                    {
+                        reg = InputReader.PromptUntilValid<string>(
+                        tryRead: (out reg) =>
+                        {
+                            reg = Console.ReadLine() ?? "";
+                            return VehicleRegister.IsUnique(reg) && VehicleRegister.IsValidRegNumber(reg);
+                        },
+                        showQuery: () => Display.ShowQuery("Registration must be 3 characters followed by 3 numbers, example: <abc123>"),
+                        showError: () => Display.ErrorMessage(error: "Registration is not unique or invalid format."));
+                    }
+                    return new VehicleDetails(Brand: strings[0].Trim(), Registration: reg, Color: strings[2].Trim(), WheelCount: wheelCount);
                 }
                 else
                 {
