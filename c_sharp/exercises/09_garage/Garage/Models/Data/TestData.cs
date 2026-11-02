@@ -8,7 +8,7 @@ namespace Garage.Models.Data;
 
 public static class TestData
 {
-    private static bool IsInitialized = false;
+    private static bool _IsInitialized = false;
     private static List<IVehicle> _testData = [];
     public static IEnumerable<IVehicle> GetTestData()
     {
@@ -45,21 +45,25 @@ public static class TestData
             () => new Motorcycle("Suzuki", "MOT105", "Black", 2, 1)
         };
 
-        foreach (var createVehicle in testData)
-        {
-            try
-            {
-                var v = createVehicle();
-                _testData.Add(v);
-                VehicleRegister.Add(v);
 
-            }
-            catch
+        if (!_IsInitialized)
+        {
+            _IsInitialized = true;
+            foreach (var createVehicle in testData)
             {
-                // Dont care, just continue
+                try
+                {
+                    var v = createVehicle();
+                    _testData.Add(v);
+                    VehicleRegister.Add(v);
+
+                }
+                catch
+                {
+                    // Dont care, just continue
+                }
             }
         }
-        IsInitialized = true;
 
         return _testData;
     }
