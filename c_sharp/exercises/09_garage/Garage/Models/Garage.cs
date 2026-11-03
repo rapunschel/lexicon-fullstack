@@ -30,7 +30,7 @@ public class GarageCollection<T> : IEnumerable<T>, IGarageCollection<T> where T 
 
     public IEnumerable<T> Search(Func<T, bool> matches)
     {
-        return (IEnumerable<T>)_storage.FindAll(item => matches(item)).ConvertAll(item => (T)item.ShallowCopy());
+        return _storage.FindAll(item => matches(item)).ConvertAll(item => (T)item.ShallowCopy());
     }
 
     public CollectionResult Add(T item)
