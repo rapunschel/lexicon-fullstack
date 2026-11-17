@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/StorageAPI/" />
+  <Folder Name="/StorageAPI/Models/" />
+  <Project Path="StorageAPI/StorageAPI.csproj" />
+</Solution>
