@@ -1,0 +1,18 @@
+2024-01-19 13:37:43.427 +01:00 [DBG] Connection id "0HN0O2408B23K" accepted.
+2024-01-19 13:37:43.440 +01:00 [DBG] Connection id "0HN0O2408B23K" started.
+2024-01-19 13:37:43.460 +01:00 [DBG] Connection 0HN0O2408B23K established using the following protocol: "Tls13"
+2024-01-19 13:37:43.500 +01:00 [INF] Request starting HTTP/1.1 GET https://localhost:7169/api/v{version:apiVersion}/cities?name=string&searchQuery=string - null null
+2024-01-19 13:37:43.503 +01:00 [DBG] The request path  does not match the path filter
+2024-01-19 13:37:43.510 +01:00 [DBG] 1 candidate(s) found for the request path '/api/v{version:apiVersion}/cities'
+2024-01-19 13:37:43.513 +01:00 [DBG] Endpoint 'CityInfo.API.Controllers.CitiesController.GetCities (CityInfo.API)' with route pattern 'api/v{version:apiVersion}/cities' was rejected by complex segment 'v{version:}' for the request path '/api/v{version:apiVersion}/cities'
+2024-01-19 13:37:43.517 +01:00 [DBG] Endpoint 'CityInfo.API.Controllers.CitiesController.GetCities (CityInfo.API)' with route pattern 'api/v{version:apiVersion}/cities' was rejected by constraint 'version':'Asp.Versioning.Routing.ApiVersionRouteConstraint' with value 'null' for the request path '/api/v%7Bversion:apiVersion%7D/cities'
+2024-01-19 13:37:43.519 +01:00 [DBG] Endpoint 'CityInfo.API.Controllers.CitiesController.GetCities (CityInfo.API)' with route pattern 'api/v{version:apiVersion}/cities' is not valid for the request path '/api/v{version:apiVersion}/cities'
+2024-01-19 13:37:43.521 +01:00 [DBG] Request did not match any endpoints
+2024-01-19 13:37:43.522 +01:00 [DBG] AuthenticationScheme: Bearer was not authenticated.
+2024-01-19 13:37:43.523 +01:00 [DBG] Connection id "0HN0O2408B23K" completed keep alive response.
+2024-01-19 13:37:43.524 +01:00 [INF] Request finished HTTP/1.1 GET https://localhost:7169/api/v{version:apiVersion}/cities?name=string&searchQuery=string - 404 0 null 23.9898ms
+2024-01-19 13:37:43.526 +01:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:7169/api/v%7Bversion:apiVersion%7D/cities, Response status code: 404
+2024-01-19 13:38:58.450 +01:00 [DBG] Connection id "0HN0O2408B23K" received FIN.
+2024-01-19 13:38:58.451 +01:00 [DBG] Connection id "0HN0O2408B23K" sending FIN because: "The Socket transport's send loop completed gracefully."
+2024-01-19 13:38:58.453 +01:00 [DBG] Connection id "0HN0O2408B23K" disconnecting.
+2024-01-19 13:38:58.454 +01:00 [DBG] Connection id "0HN0O2408B23K" stopped.

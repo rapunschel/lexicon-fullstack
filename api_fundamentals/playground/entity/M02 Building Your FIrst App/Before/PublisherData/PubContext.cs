@@ -16,7 +16,8 @@ namespace PublisherData
             var database = Environment.GetEnvironmentVariable("DB_NAME");
             var user = Environment.GetEnvironmentVariable("DB_USER");
             var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
-            optionsBuilder.UseSqlServer($"Server={server};Database={database};User Id={user};Password={password};TrustServerCertificate=True;");
+            optionsBuilder
+                .UseSqlServer($"Server={server};Database={database};User Id={user};Password={password};TrustServerCertificate=True;");
 
         }
     }
